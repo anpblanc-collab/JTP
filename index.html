@@ -1,0 +1,1936 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JTP — Join the Party</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400;1,700&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f2ead8;
+    --parchment: #e8dfc4;
+    --aged: #d9cca8;
+    --card: #ede3c8;
+    --ink: #2c1f0e;
+    --brown: #5c3d1e;
+    --rust: #8b3a1a;
+    --moss: #4a5e2f;
+    --muted: #7a6548;
+    --border: #b5a07a;
+    --dark-border: #6b5535;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Lora', serif;
+    font-weight: 400;
+    overflow-x: hidden;
+  }
+
+  /* paper texture overlay */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 9999; opacity: 0.6;
+  }
+
+  /* ---- NAV ---- */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    display: grid; grid-template-columns: 1fr auto 1fr;
+    align-items: center; padding: 1rem 3rem;
+    border-bottom: 2px solid var(--dark-border);
+    background: var(--parchment);
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(44,31,14,0.12);
+  }
+
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.9rem; font-weight: 900;
+    color: var(--rust);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  nav .tagline {
+    font-family: 'Lora', serif;
+    font-size: 0.72rem; font-style: italic;
+    color: var(--muted); text-align: center;
+    letter-spacing: 0.05em;
+  }
+
+  .nav-cta {
+    background: var(--rust);
+    border: 1.5px solid var(--dark-border);
+    color: var(--parchment);
+    padding: 0.5rem 1.4rem;
+    font-family: 'Lora', serif;
+    font-size: 0.72rem; font-style: italic;
+    letter-spacing: 0.05em;
+    cursor: pointer; transition: all 0.2s;
+    box-shadow: 2px 2px 0 var(--dark-border);
+  }
+  .nav-cta:hover { background: var(--brown); transform: translate(-1px,-1px); box-shadow: 3px 3px 0 var(--dark-border); }
+
+  /* ---- HERO ---- */
+  #hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    text-align: center; padding: 8rem 2rem 4rem;
+    position: relative; overflow: hidden; z-index: 1;
+    background: var(--bg);
+  }
+
+  #hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 70% 50% at 50% 40%, rgba(139,58,26,0.07) 0%, transparent 70%);
+  }
+
+  .hero-bg { display: none; }
+
+  .hero-eyebrow {
+    font-family: 'Lora', serif;
+    font-size: 0.72rem; font-style: italic;
+    letter-spacing: 0.3em; color: var(--rust);
+    margin-bottom: 1.5rem; opacity: 0;
+    animation: fadeUp 0.8s 0.2s forwards;
+  }
+
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(4rem, 12vw, 9.5rem);
+    font-weight: 900; line-height: 0.9;
+    letter-spacing: -0.01em; color: var(--ink);
+    margin-bottom: 0.2em; opacity: 0;
+    animation: fadeUp 0.8s 0.3s forwards;
+  }
+
+  .hero-title em {
+    font-style: italic; color: var(--rust);
+  }
+
+  .hero-subtitle {
+    font-family: 'Lora', serif;
+    font-size: clamp(1rem, 2.5vw, 1.25rem);
+    font-style: italic; font-weight: 400;
+    color: var(--muted); max-width: 540px;
+    line-height: 1.7; margin-bottom: 2rem;
+    opacity: 0; animation: fadeUp 0.8s 0.5s forwards;
+  }
+
+  .hero-divider {
+    width: 80px; height: 1px;
+    background: var(--dark-border);
+    margin: 0 auto 2rem; opacity: 0;
+    animation: fadeUp 0.8s 0.4s forwards;
+    position: relative;
+  }
+  .hero-divider::before, .hero-divider::after {
+    content: '◆';
+    position: absolute; top: 50%;
+    transform: translateY(-50%);
+    color: var(--rust); font-size: 0.4rem;
+  }
+  .hero-divider::before { left: -10px; }
+  .hero-divider::after { right: -10px; }
+
+  .hero-desc {
+    font-size: 0.9rem; color: var(--muted);
+    max-width: 460px; line-height: 1.9;
+    margin-bottom: 2.5rem; opacity: 0;
+    animation: fadeUp 0.8s 0.6s forwards;
+  }
+
+  .hero-cta-group {
+    display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;
+    opacity: 0; animation: fadeUp 0.8s 0.7s forwards;
+  }
+
+  .btn-primary {
+    background: var(--rust); color: var(--parchment);
+    border: 1.5px solid var(--dark-border);
+    padding: 0.9rem 2.4rem;
+    font-family: 'Lora', serif; font-size: 0.82rem; font-style: italic;
+    letter-spacing: 0.05em; cursor: pointer; transition: all 0.2s;
+    box-shadow: 3px 3px 0 var(--dark-border);
+  }
+  .btn-primary:hover { background: var(--brown); transform: translate(-2px,-2px); box-shadow: 5px 5px 0 var(--dark-border); }
+
+  .btn-secondary {
+    background: transparent; color: var(--brown);
+    border: 1.5px solid var(--dark-border);
+    padding: 0.9rem 2.4rem;
+    font-family: 'Lora', serif; font-size: 0.82rem; font-style: italic;
+    letter-spacing: 0.05em; cursor: pointer; transition: all 0.2s;
+    box-shadow: 3px 3px 0 var(--dark-border);
+  }
+  .btn-secondary:hover { background: var(--aged); transform: translate(-2px,-2px); box-shadow: 5px 5px 0 var(--dark-border); }
+
+  /* ---- TAGS STRIP ---- */
+  .tags-strip {
+    border-top: 2px solid var(--dark-border);
+    border-bottom: 2px solid var(--dark-border);
+    padding: 1rem 0;
+    display: flex; gap: 3rem; justify-content: center; flex-wrap: wrap;
+    background: var(--brown);
+  }
+  .tag-item {
+    font-size: 0.68rem; font-weight: 500;
+    font-family: 'Lora', serif; font-style: italic;
+    letter-spacing: 0.15em; color: var(--aged);
+    display: flex; align-items: center; gap: 0.6rem;
+  }
+  .tag-item::before { content: '◆'; color: var(--aged); font-size: 0.35rem; opacity: 0.7; }
+
+  /* ---- SECTIONS ---- */
+  section {
+    padding: 6rem 2rem;
+    max-width: 1100px; margin: 0 auto;
+    position: relative; z-index: 1;
+  }
+
+  .section-label {
+    font-family: 'Lora', serif;
+    font-size: 0.7rem; font-style: italic;
+    letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--rust); margin-bottom: 1rem;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 5vw, 3.8rem);
+    font-weight: 900; line-height: 1;
+    letter-spacing: -0.01em;
+    margin-bottom: 1.5rem; color: var(--ink);
+  }
+  .section-title em { font-style: italic; color: var(--rust); }
+
+  .section-body { font-size: 0.92rem; color: var(--muted); line-height: 1.9; max-width: 540px; margin-bottom: 3rem; }
+
+  /* ---- FEATURE CARDS ---- */
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem; margin-top: 3rem;
+  }
+
+  .feature-card {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    padding: 2rem; transition: all 0.2s;
+    box-shadow: 3px 3px 0 var(--border);
+    position: relative;
+  }
+  .feature-card::after {
+    content: '';
+    position: absolute; top: 4px; left: 4px; right: -4px; bottom: -4px;
+    border: 1px solid var(--border); z-index: -1; opacity: 0.4;
+  }
+  .feature-card:hover { transform: translate(-2px,-2px); box-shadow: 5px 5px 0 var(--dark-border); }
+
+  .feature-icon { font-size: 1.6rem; margin-bottom: 1rem; }
+  .feature-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem; font-weight: 700;
+    margin-bottom: 0.5rem; color: var(--ink);
+  }
+  .feature-desc { font-size: 0.84rem; color: var(--muted); line-height: 1.7; font-style: italic; }
+
+  /* ---- CONFIGURATOR ---- */
+  #configurator { padding: 6rem 2rem; max-width: 900px; margin: 0 auto; position: relative; z-index: 1; }
+
+  .config-step { display: none; }
+  .config-step.active { display: block; animation: fadeUp 0.4s forwards; }
+
+  .step-indicator { display: flex; gap: 0.5rem; margin-bottom: 3rem; align-items: center; }
+
+  .step-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--border); border: 1.5px solid var(--dark-border);
+    transition: all 0.3s;
+  }
+  .step-dot.active { background: var(--rust); width: 24px; border-radius: 3px; }
+  .step-dot.done { background: var(--moss); border-color: var(--moss); }
+
+  .step-label { font-size: 0.68rem; font-style: italic; font-family: 'Lora', serif; color: var(--muted); margin-left: 0.8rem; }
+
+  .option-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0.8rem; margin: 1.5rem 0; }
+
+  .option-card {
+    border: 1.5px solid var(--border);
+    padding: 1.2rem 1rem; cursor: pointer;
+    transition: all 0.2s; text-align: center;
+    background: var(--card); position: relative;
+    box-shadow: 2px 2px 0 var(--border);
+  }
+  .option-card:hover { border-color: var(--rust); box-shadow: 3px 3px 0 var(--rust); transform: translate(-1px,-1px); background: var(--parchment); }
+
+  .option-card.selected {
+    border-color: var(--rust); background: var(--aged);
+    box-shadow: 3px 3px 0 var(--rust);
+  }
+  .option-card.selected::after { content: '✓'; position: absolute; top: 6px; right: 8px; color: var(--rust); font-size: 0.72rem; }
+
+  .option-card .opt-icon { font-size: 1.4rem; margin-bottom: 0.5rem; }
+  .option-card .opt-label { font-size: 0.8rem; font-weight: 500; font-family: 'Lora', serif; color: var(--ink); margin-bottom: 0.2rem; }
+  .option-card .opt-sub { font-size: 0.68rem; color: var(--muted); font-style: italic; }
+
+  .option-card.multi.selected { border-color: var(--rust); background: rgba(139,58,26,0.08); box-shadow: 3px 3px 0 var(--rust); }
+  .option-card.multi.selected::after { color: var(--rust); }
+
+  /* slider */
+  .slider-wrap { margin: 1.5rem 0; }
+  .slider-labels { display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.76rem; color: var(--muted); font-style: italic; }
+
+  input[type=range] {
+    width: 100%; -webkit-appearance: none;
+    height: 3px; background: var(--dark-border);
+    outline: none; margin: 1rem 0; border-radius: 1px;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--parchment); cursor: pointer;
+    border: 2px solid var(--rust);
+    box-shadow: 1px 1px 4px rgba(44,31,14,0.3);
+  }
+
+  .slider-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 3.5rem; font-weight: 900;
+    color: var(--rust); text-align: center; margin: 1rem 0;
+  }
+  .slider-value span { font-size: 1.8rem; }
+
+  .price-note {
+    font-size: 0.82rem; color: var(--muted); line-height: 1.8;
+    border-left: 2px solid var(--rust);
+    padding-left: 1rem; margin: 1.5rem 0; font-style: italic;
+  }
+
+  .text-input {
+    width: 100%; background: var(--parchment);
+    border: 1.5px solid var(--border); color: var(--ink);
+    padding: 0.9rem 1.1rem;
+    font-family: 'Lora', serif; font-size: 0.9rem;
+    outline: none; transition: all 0.2s; margin: 0.5rem 0; resize: vertical;
+  }
+  .text-input:focus { border-color: var(--rust); box-shadow: 0 0 0 3px rgba(139,58,26,0.1); }
+  .text-input::placeholder { color: var(--border); font-style: italic; }
+
+  .form-label {
+    font-size: 0.68rem; font-weight: 500; font-style: italic;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--muted); font-family: 'Lora', serif;
+    display: block; margin: 1.5rem 0 0.5rem;
+  }
+
+  .step-nav { display: flex; justify-content: space-between; margin-top: 2.5rem; padding-top: 2rem; border-top: 1px dashed var(--border); }
+
+  .btn-back {
+    background: transparent; border: 1.5px solid var(--border);
+    color: var(--muted); padding: 0.75rem 1.8rem;
+    font-family: 'Lora', serif; font-size: 0.78rem; font-style: italic;
+    letter-spacing: 0.05em; cursor: pointer; transition: all 0.2s;
+    box-shadow: 2px 2px 0 var(--border);
+  }
+  .btn-back:hover { background: var(--aged); color: var(--ink); transform: translate(-1px,-1px); box-shadow: 3px 3px 0 var(--dark-border); }
+
+  .btn-next {
+    background: var(--rust); border: 1.5px solid var(--dark-border);
+    color: var(--parchment); padding: 0.75rem 2.2rem;
+    font-family: 'Lora', serif; font-size: 0.78rem; font-style: italic;
+    letter-spacing: 0.05em; cursor: pointer; transition: all 0.2s;
+    box-shadow: 3px 3px 0 var(--dark-border);
+  }
+  .btn-next:hover { background: var(--brown); transform: translate(-2px,-2px); box-shadow: 5px 5px 0 var(--dark-border); }
+
+  /* ---- SUMMARY ---- */
+  .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin: 2rem 0; }
+  .summary-item { background: var(--card); border: 1.5px solid var(--border); padding: 0.9rem 1rem; }
+  .summary-key { font-size: 0.62rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); font-style: italic; font-family: 'Lora', serif; margin-bottom: 0.3rem; }
+  .summary-val { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700; color: var(--rust); }
+
+  /* ---- CONFIRMATION ---- */
+  #confirmation { display: none; text-align: center; padding: 8rem 2rem; max-width: 600px; margin: 0 auto; animation: fadeUp 0.6s forwards; position: relative; z-index: 1; }
+  .confirm-icon { font-size: 3rem; margin-bottom: 2rem; }
+
+  .responses-panel {
+    background: var(--card); border: 1.5px solid var(--border);
+    padding: 2rem; text-align: left; margin-top: 2rem;
+    box-shadow: 4px 4px 0 var(--border);
+  }
+  .responses-panel h3 { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 700; color: var(--rust); margin-bottom: 1.5rem; }
+
+  .response-row { display: flex; justify-content: space-between; padding: 0.6rem 0; border-bottom: 1px dashed var(--border); font-size: 0.82rem; gap: 1rem; }
+  .response-row:last-child { border-bottom: none; }
+  .response-row .rk { color: var(--muted); font-style: italic; }
+  .response-row .rv { color: var(--ink); font-weight: 600; text-align: right; }
+
+  /* ---- RESPONSES VIEWER ---- */
+  #responses-viewer { display: none; padding: 4rem 2rem; max-width: 900px; margin: 0 auto; position: relative; z-index: 1; }
+  .response-entry { background: var(--card); border: 1.5px solid var(--border); padding: 1.5rem; margin-bottom: 1rem; box-shadow: 2px 2px 0 var(--border); }
+  .response-entry h4 { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700; color: var(--rust); margin-bottom: 1rem; }
+
+  /* ---- STARS ---- */
+  .star-btn { font-size: 2rem; color: var(--border); cursor: pointer; transition: all 0.15s; user-select: none; }
+  .star-btn:hover, .star-btn.active { color: #c87d00; transform: scale(1.2); }
+
+  /* ---- REVIEW CARDS ---- */
+  .review-card {
+    background: var(--card); border: 1.5px solid var(--border);
+    padding: 1.8rem; display: flex; flex-direction: column; gap: 1rem;
+    transition: all 0.2s; box-shadow: 3px 3px 0 var(--border);
+  }
+  .review-card:hover { transform: translate(-2px,-2px); box-shadow: 5px 5px 0 var(--dark-border); }
+  .review-card:nth-child(odd) { background: var(--parchment); }
+
+  .review-stars { color: #c87d00; font-size: 0.95rem; }
+  .review-text { font-family: 'Lora', serif; font-size: 0.95rem; font-style: italic; color: var(--ink); line-height: 1.8; flex: 1; }
+  .review-author { border-top: 1px dashed var(--border); padding-top: 0.8rem; }
+  .review-name { font-family: 'Playfair Display', serif; font-size: 0.85rem; font-weight: 700; color: var(--brown); }
+  .review-meta { font-size: 0.7rem; color: var(--muted); margin-top: 0.2rem; font-style: italic; }
+
+  /* ---- PLAYER DOTS ---- */
+  .player-dot { position: absolute; font-size: 1.6rem; animation: floatDot 3s ease-in-out infinite; }
+  .player-dot:nth-child(2) { animation-delay: 0.4s; }
+  .player-dot:nth-child(3) { animation-delay: 0.8s; }
+  .player-dot:nth-child(4) { animation-delay: 1.2s; }
+  .player-dot:nth-child(5) { animation-delay: 1.6s; }
+  @keyframes floatDot { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+  @keyframes cardPulse { 0%, 100% { box-shadow: 3px 3px 0 var(--border); } 50% { box-shadow: 5px 5px 0 var(--dark-border); } }
+
+  /* ---- PARTY BG ---- */
+  .party-bg { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+
+  /* ---- STAT LIST ---- */
+  .stat-list { margin-top: 2rem; }
+  .stat-row { display: flex; justify-content: space-between; padding: 1rem 0; border-bottom: 1px dashed var(--border); font-size: 0.85rem; align-items: center; }
+  .stat-row .sk { color: var(--muted); font-style: italic; }
+  .stat-row .sv { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 900; color: var(--rust); }
+
+  /* ---- OCCASIONS ---- */
+  .occasions-list { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 2rem; }
+  .occasion-tag {
+    border: 1.5px solid var(--border); padding: 0.5rem 1.1rem;
+    font-size: 0.78rem; font-style: italic; font-family: 'Lora', serif;
+    color: var(--muted); transition: all 0.2s; cursor: default;
+    background: var(--card); box-shadow: 2px 2px 0 var(--border);
+  }
+  .occasion-tag:hover { border-color: var(--rust); color: var(--rust); background: var(--parchment); transform: translate(-1px,-1px); box-shadow: 3px 3px 0 var(--rust); }
+
+  /* ---- ABOUT VISUAL ---- */
+  .about-split { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+  .about-visual {
+    position: relative; height: 400px;
+    background: var(--parchment); border: 1.5px solid var(--dark-border);
+    display: flex; align-items: center; justify-content: center; overflow: hidden;
+    box-shadow: 6px 6px 0 var(--dark-border);
+  }
+  .about-visual::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 50%, rgba(139,58,26,0.1) 0%, transparent 70%); }
+  .visual-glyph { font-family: 'Playfair Display', serif; font-size: 10rem; font-weight: 900; color: var(--rust); opacity: 0.06; position: absolute; }
+  .visual-lines {
+    position: absolute; inset: 0;
+    background-image: linear-gradient(rgba(92,61,30,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(92,61,30,0.06) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+
+  /* ---- ANIMATIONS ---- */
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+
+  /* ---- FOOTER ---- */
+  footer {
+    border-top: 2px solid var(--dark-border); padding: 2.5rem 2rem;
+    text-align: center; font-size: 0.7rem; font-style: italic;
+    font-family: 'Lora', serif; letter-spacing: 0.1em;
+    color: var(--muted); background: var(--parchment);
+  }
+
+  /* mobile */
+  @media (max-width: 700px) {
+    nav { padding: 0.9rem 1.2rem; }
+    .nav-cta { font-size: 0.65rem; padding: 0.4rem 0.9rem; }
+    .about-split { grid-template-columns: 1fr; }
+    .about-visual { height: 250px; }
+    .summary-grid { grid-template-columns: 1fr; }
+    .hero-title { font-size: clamp(3.5rem, 18vw, 9.5rem); }
+    .lang-switcher { margin-left: auto; }
+  }
+
+  /* ---- LANG SWITCHER ---- */
+  .lang-switcher {
+    display: flex;
+    gap: 0;
+    border: 1.5px solid var(--border);
+    overflow: hidden;
+  }
+  .lang-btn {
+    background: transparent;
+    border: none;
+    border-right: 1px solid var(--border);
+    color: var(--muted);
+    padding: 0.45rem 0.65rem;
+    font-family: 'Lora', serif;
+    font-size: 0.65rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: all 0.25s;
+  }
+  .lang-btn:last-child { border-right: none; }
+  .lang-btn:hover { color: var(--ink); background: var(--aged); }
+  .lang-btn.active { color: var(--rust); background: rgba(139,58,26,0.1); }
+
+  /* ---- NAV RIGHT ---- */
+  .nav-right {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    justify-content: flex-end;
+  }
+
+  /* ---- SVG ICON SIZING ---- */
+  .feature-icon svg { width: 28px; height: 28px; }
+  .feature-icon { color: var(--rust); }
+  .opt-icon { color: var(--rust); }
+  .opt-icon svg { width: 24px; height: 24px; display: inline-block; }
+  .confirm-icon { color: var(--rust); }
+  .confirm-icon svg { width: 48px; height: 48px; }
+
+</style>
+</head>
+<body>
+
+<!-- STATIC SVG BACKGROUND DRAWINGS -->
+<div class="party-bg" aria-hidden="true">
+
+  <!-- Party hat top-left -->
+  <svg style="position:absolute;left:2%;top:6%;opacity:0.07;width:48px;" viewBox="0 0 40 50" fill="none" stroke="#5c3d1e" stroke-width="1.5">
+    <polygon points="20,2 38,44 2,44" />
+    <line x1="2" y1="44" x2="38" y2="44"/>
+    <line x1="14" y1="22" x2="26" y2="22"/>
+    <circle cx="20" cy="2" r="2" fill="#5c3d1e"/>
+  </svg>
+
+  <!-- Magnifying glass -->
+  <svg style="position:absolute;left:11%;top:30%;opacity:0.06;width:44px;" viewBox="0 0 40 40" fill="none" stroke="#5c3d1e" stroke-width="1.5">
+    <circle cx="16" cy="16" r="11"/>
+    <line x1="24" y1="24" x2="37" y2="37"/>
+  </svg>
+
+  <!-- Playing card -->
+  <svg style="position:absolute;left:20%;top:12%;opacity:0.06;width:36px;" viewBox="0 0 30 42" fill="none" stroke="#5c3d1e" stroke-width="1.5">
+    <rect x="2" y="2" width="26" height="38" rx="3"/>
+    <text x="7" y="16" font-size="10" fill="#5c3d1e" font-family="serif" stroke="none">♦</text>
+    <text x="7" y="34" font-size="10" fill="#5c3d1e" font-family="serif" stroke="none">♦</text>
+  </svg>
+
+  <!-- Star burst -->
+  <svg style="position:absolute;left:32%;top:5%;opacity:0.07;width:40px;" viewBox="0 0 40 40" fill="none" stroke="#5c3d1e" stroke-width="1.2">
+    <line x1="20" y1="2" x2="20" y2="38"/>
+    <line x1="2" y1="20" x2="38" y2="20"/>
+    <line x1="7" y1="7" x2="33" y2="33"/>
+    <line x1="33" y1="7" x2="7" y2="33"/>
+  </svg>
+
+  <!-- Balloon -->
+  <svg style="position:absolute;left:44%;top:3%;opacity:0.06;width:38px;" viewBox="0 0 30 50" fill="none" stroke="#5c3d1e" stroke-width="1.5">
+    <ellipse cx="15" cy="18" rx="12" ry="15"/>
+    <path d="M15 33 Q12 38 15 42 Q18 38 15 33"/>
+    <line x1="15" y1="42" x2="15" y2="50"/>
+  </svg>
+
+  <!-- Diamond -->
+  <svg style="position:absolute;left:57%;top:9%;opacity:0.06;width:36px;" viewBox="0 0 30 30" fill="none" stroke="#5c3d1e" stroke-width="1.5">
+    <polygon points="15,2 28,12 15,28 2,12"/>
+  </svg>
+
+  <!-- Confetti pieces top right area -->
+  <svg style="position:absolute;left:68%;top:4%;opacity:0.07;width:50px;" viewBox="0 0 50 30" fill="none" stroke="#5c3d1e" stroke-width="1.5">
+    <rect x="4" y="4" width="8" height="8" transform="rotate(20,8,8)"/>
+    <rect x="22" y="2" width="6" height="6" transform="rotate(-15,25,5)"/>
+    <rect x="38" y="8" width="8" height="8" transform="rotate(35,42,12)"/>
+    <line x1="16" y1="20" x2="22" y2="28"/>
+    <line x1="30" y1="18" x2="34" y2="26"/>
+  </svg>
+
+  <!-- Party hat right -->
+  <svg style="position:absolute;left:82%;top:7%;opacity:0.06;width:42px;" viewBox="0 0 40 50" fill="none" stroke="#5c3d1e" stroke-width="1.5">
+    <polygon points="20,2 38,44 2,44"/>
+    <line x1="2" y1="44" x2="38" y2="44"/>
+    <line x1="11" y1="28" x2="29" y2="28"/>
+    <circle cx="20" cy="2" r="2" fill="#5c3d1e"/>
+  </svg>
+
+  <!-- Clue envelope mid-left -->
+  <svg style="position:absolute;left:5%;top:52%;opacity:0.06;width:46px;" viewBox="0 0 40 30" fill="none" stroke="#5c3d1e" stroke-width="1.5">
+    <rect x="2" y="2" width="36" height="26" rx="2"/>
+    <polyline points="2,2 20,18 38,2"/>
+  </svg>
+
+  <!-- Question mark mid -->
+  <svg style="position:absolute;left:28%;top:58%;opacity:0.06;width:32px;" viewBox="0 0 30 40" fill="none" stroke="#5c3d1e" stroke-width="1.8">
+    <path d="M8,10 Q8,4 15,4 Q22,4 22,11 Q22,17 15,20 L15,26"/>
+    <circle cx="15" cy="33" r="2" fill="#5c3d1e" stroke="none"/>
+  </svg>
+
+  <!-- Dice -->
+  <svg style="position:absolute;left:50%;top:55%;opacity:0.06;width:40px;" viewBox="0 0 36 36" fill="none" stroke="#5c3d1e" stroke-width="1.5">
+    <rect x="2" y="2" width="32" height="32" rx="5"/>
+    <circle cx="10" cy="10" r="2.5" fill="#5c3d1e" stroke="none"/>
+    <circle cx="26" cy="10" r="2.5" fill="#5c3d1e" stroke="none"/>
+    <circle cx="18" cy="18" r="2.5" fill="#5c3d1e" stroke="none"/>
+    <circle cx="10" cy="26" r="2.5" fill="#5c3d1e" stroke="none"/>
+    <circle cx="26" cy="26" r="2.5" fill="#5c3d1e" stroke="none"/>
+  </svg>
+
+  <!-- Magnifying glass bottom right -->
+  <svg style="position:absolute;left:78%;top:48%;opacity:0.06;width:44px;" viewBox="0 0 40 40" fill="none" stroke="#5c3d1e" stroke-width="1.5">
+    <circle cx="16" cy="16" r="11"/>
+    <line x1="24" y1="24" x2="37" y2="37"/>
+  </svg>
+
+  <!-- Star bottom left -->
+  <svg style="position:absolute;left:8%;top:78%;opacity:0.07;width:36px;" viewBox="0 0 36 36" fill="none" stroke="#5c3d1e" stroke-width="1.4">
+    <polygon points="18,2 22,14 35,14 25,22 29,34 18,26 7,34 11,22 1,14 14,14"/>
+  </svg>
+
+  <!-- Balloon bottom mid -->
+  <svg style="position:absolute;left:40%;top:75%;opacity:0.06;width:36px;" viewBox="0 0 30 50" fill="none" stroke="#5c3d1e" stroke-width="1.5">
+    <ellipse cx="15" cy="18" rx="12" ry="15"/>
+    <path d="M15 33 Q12 38 15 42 Q18 38 15 33"/>
+    <line x1="15" y1="42" x2="15" y2="50"/>
+  </svg>
+
+  <!-- Playing card bottom right -->
+  <svg style="position:absolute;left:72%;top:72%;opacity:0.06;width:34px;" viewBox="0 0 30 42" fill="none" stroke="#5c3d1e" stroke-width="1.5">
+    <rect x="2" y="2" width="26" height="38" rx="3"/>
+    <text x="7" y="16" font-size="10" fill="#5c3d1e" font-family="serif" stroke="none">♠</text>
+    <text x="7" y="34" font-size="10" fill="#5c3d1e" font-family="serif" stroke="none">♠</text>
+  </svg>
+
+  <!-- Confetti bottom right -->
+  <svg style="position:absolute;left:88%;top:80%;opacity:0.07;width:50px;" viewBox="0 0 50 30" fill="none" stroke="#5c3d1e" stroke-width="1.5">
+    <rect x="4" y="4" width="8" height="8" transform="rotate(20,8,8)"/>
+    <rect x="22" y="2" width="6" height="6" transform="rotate(-15,25,5)"/>
+    <rect x="38" y="8" width="8" height="8" transform="rotate(35,42,12)"/>
+    <line x1="16" y1="20" x2="22" y2="28"/>
+    <line x1="30" y1="18" x2="34" y2="26"/>
+  </svg>
+
+  <!-- Diamond bottom mid-right -->
+  <svg style="position:absolute;left:62%;top:82%;opacity:0.06;width:32px;" viewBox="0 0 30 30" fill="none" stroke="#5c3d1e" stroke-width="1.5">
+    <polygon points="15,2 28,12 15,28 2,12"/>
+  </svg>
+
+</div>
+
+
+<!-- NAV -->
+<nav>
+  <div class="logo">JTP</div>
+  <div class="tagline">Join the Party</div>
+  <div class="nav-right">
+    <div class="lang-switcher">
+      <button class="lang-btn active" onclick="setLang('fr')">FR</button>
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('nl')">NL</button>
+    </div>
+    <button class="nav-cta" onclick="scrollToReviews()" style="background:transparent;color:var(--muted);border-color:var(--border);" data-i18n="nav_reviews">Avis</button>
+    <button class="nav-cta" onclick="scrollToConfigurator()" data-i18n="nav_play">Jouer ce soir</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-eyebrow" data-i18n="hero_eyebrow">Un nouveau type de jeu</div>
+  <h1 class="hero-title" data-i18n-html="hero_title">C'est <em>Vous</em><br>le<br><em>Mystère</em></h1>
+  <div class="hero-divider"></div>
+  <p class="hero-subtitle" data-i18n="hero_subtitle">Là où le virtuel rencontre la réalité. Là où votre groupe devient l'histoire.</p>
+  <p class="hero-desc" data-i18n="hero_desc">Une expérience collaborative et immersive mêlant physique et numérique — conçue pour les groupes en quête de quelque chose d'inoubliable. Imaginez l'Orient Express, mais vous êtes tous à bord.</p>
+  <div class="hero-cta-group">
+    <button class="btn-primary" onclick="scrollToConfigurator()" data-i18n="hero_cta_build">Créez votre expérience</button>
+    <button class="btn-secondary" onclick="scrollToAbout()" data-i18n="hero_cta_discover">Découvrir le jeu</button>
+  </div>
+</div>
+
+<!-- TAGS STRIP -->
+<div class="tags-strip">
+  <div class="tag-item" data-i18n="tag_players">6 à 30+ joueurs</div>
+  <div class="tag-item" data-i18n="tag_realvirtual">Jeu réel + virtuel</div>
+  <div class="tag-item" data-i18n="tag_ai">Scénarios générés par IA</div>
+  <div class="tag-item" data-i18n="tag_noexp">Aucune expérience requise</div>
+  <div class="tag-item" data-i18n="tag_occasion">Toute occasion</div>
+</div>
+
+<!-- ABOUT SECTION -->
+<section id="about">
+  <div class="about-split">
+    <div>
+      <div class="section-label" data-i18n="about_label">Qu'est-ce que JTP ?</div>
+      <h2 class="section-title" data-i18n-html="about_title">Un <em>mystère</em><br>collaboratif qui vit<br>entre deux mondes</h2>
+      <p class="section-body" data-i18n="about_body1">Votre groupe reçoit des indices sur vos téléphones et les résout dans le monde réel. Aucun joueur ne possède l'image complète — c'est seulement ensemble que vous pouvez démêler la vérité.</p>
+      <p class="section-body" style="margin-top:-1rem" data-i18n="about_body2">Propulsé par des scénarios générés par IA, chaque partie est unique. Chaque session, une nouvelle histoire.</p>
+
+      <div class="stat-list">
+        <div class="stat-row">
+          <span class="sk" data-i18n="stat_scenarios">Scénarios uniques</span>
+          <span class="sv">∞</span>
+        </div>
+        <div class="stat-row">
+          <span class="sk" data-i18n="stat_groupsize">Taille moyenne du groupe</span>
+          <span class="sv">10 – 20</span>
+        </div>
+        <div class="stat-row">
+          <span class="sk" data-i18n="stat_duration">Durée moyenne d'une session</span>
+          <span class="sv">1 – 2 h</span>
+        </div>
+        <div class="stat-row">
+          <span class="sk" data-i18n="stat_devices">Appareils nécessaires</span>
+          <span class="sv" data-i18n="stat_devices_val">Smartphones uniquement</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="about-visual" style="padding:0; overflow:hidden;">
+      <img src="WhatsApp_Image_2026-03-10_at_14_55_27.jpeg" alt="JTP game night" style="width:100%; height:100%; object-fit:cover;">
+    </div>
+  </div>
+
+  <div style="margin-top:4rem">
+    <div class="section-label" data-i18n="perfect_for">Parfait pour</div>
+    <div class="occasions-list">
+      <div class="occasion-tag" data-i18n="occ_birthday">Anniversaires</div>
+      <div class="occasion-tag" data-i18n="occ_house">Soirées</div>
+      <div class="occasion-tag" data-i18n="occ_friends">Groupes d'amis</div>
+      <div class="occasion-tag" data-i18n="occ_team">Team buildings</div>
+      <div class="occasion-tag" data-i18n="occ_mixed">Groupes mixtes & inconnus</div>
+      <div class="occasion-tag" data-i18n="occ_student_parties">Soirées étudiantes</div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section style="background: var(--deep); max-width: none; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+<div style="max-width: 1100px; margin: 0 auto;">
+  <div class="section-label" style="text-align:center" data-i18n="how_label">Comment ça marche</div>
+  <h2 class="section-title" style="text-align:center" data-i18n-html="how_title">Quatre étapes vers le <em>mystère</em></h2>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
+      <div class="feature-name" data-i18n="how_step1_name">1. Configurer</div>
+      <div class="feature-desc" data-i18n="how_step1_desc">Choisissez la difficulté, le scénario, la taille du groupe, et le niveau physique ou numérique de l'expérience.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="12" height="16" rx="1.5"/><path d="M9 8v2"/><path d="M9 14v2"/><rect x="9" y="2" width="12" height="16" rx="1.5"/><path d="M15 6v2"/><path d="M15 12v2"/></svg></div>
+      <div class="feature-name" data-i18n="how_step2_name">2. Recevez vos rôles</div>
+      <div class="feature-desc" data-i18n="how_step2_desc">Chaque joueur reçoit un rôle unique et des informations secrètes. Personne ne détient toutes les cartes.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><circle cx="18" cy="6" r="3"/><circle cx="12" cy="18" r="3"/><path d="M8.5 8l2.5 7.5"/><path d="M15.5 8l-2.5 7.5"/><path d="M6 9v0"/><path d="M18 9v0"/></svg></div>
+      <div class="feature-name" data-i18n="how_step3_name">3. Collaborez</div>
+      <div class="feature-desc" data-i18n="how_step3_desc">Explorez les indices virtuels, communiquez dans le monde réel, et reconstituez la vérité ensemble.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg></div>
+      <div class="feature-name" data-i18n="how_step4_name">4. Révélation</div>
+      <div class="feature-desc" data-i18n="how_step4_desc">Démasquez la vérité, consultez le classement, et revivez les meilleurs moments.</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- CONFIGURATOR -->
+<div id="configurator">
+  <div class="section-label" data-i18n="config_label">Créez votre expérience</div>
+  <h2 class="section-title" data-i18n-html="config_title">Construisez votre partie <em>parfaite</em></h2>
+  <p class="section-body" data-i18n="config_body">Dites-nous exactement ce que vous voulez — et indiquez ce que ça vaut pour vous. Ça prend 2 minutes.</p>
+
+  <!-- STEP INDICATOR -->
+  <div class="step-indicator">
+    <div class="step-dot active" id="dot-0"></div>
+    <div class="step-dot" id="dot-1"></div>
+    <div class="step-dot" id="dot-2"></div>
+    <div class="step-dot" id="dot-3"></div>
+    <div class="step-dot" id="dot-4"></div>
+    <span class="step-label" id="step-label-text">Étape 1 sur 5 — Paramètres du jeu</span>
+  </div>
+
+  <!-- STEP 0: GAME SETTINGS -->
+  <div class="config-step active" id="step-0">
+    <h3 style="font-family:'Cormorant Garamond',serif; font-size:1.8rem; margin-bottom:0.5rem;" data-i18n="s0_title">Paramètres du jeu</h3>
+    <p style="color:var(--muted); font-size:0.85rem; margin-bottom:0.5rem;" data-i18n="s0_sub">Configurez le cœur de votre expérience</p>
+
+    <div class="form-label" data-i18n="label_difficulty">Difficulté</div>
+    <div class="option-grid">
+      <div class="option-card" onclick="select(this,'difficulty')" data-value="Casual">
+        <div class="opt-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8z"/><line x1="6" y1="2" x2="6" y2="4"/><line x1="10" y1="2" x2="10" y2="4"/><line x1="14" y1="2" x2="14" y2="4"/></svg></div>
+        <div class="opt-label" data-i18n="diff_casual">Décontracté</div>
+        <div class="opt-sub" data-i18n="diff_casual_sub">Relax & fun</div>
+      </div>
+      <div class="option-card" onclick="select(this,'difficulty')" data-value="Standard">
+        <div class="opt-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/></svg></div>
+        <div class="opt-label" data-i18n="diff_standard">Standard</div>
+        <div class="opt-sub" data-i18n="diff_standard_sub">Défi équilibré</div>
+      </div>
+      <div class="option-card" onclick="select(this,'difficulty')" data-value="Expert">
+        <div class="opt-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 17.5L3 6V3h3l11.5 11.5"/><path d="M13 19l6-6"/><path d="M16 16l4 4"/><path d="M19 21l2-2"/><path d="M14.5 6.5L18 3h3v3l-3.5 3.5"/><path d="M5 14l4 4"/><path d="M7 17l-3 3"/><path d="M3 19l2 2"/></svg></div>
+        <div class="opt-label" data-i18n="diff_expert">Expert</div>
+        <div class="opt-sub" data-i18n="diff_expert_sub">Casse-tête</div>
+      </div>
+    </div>
+
+    <div class="form-label" data-i18n="label_players">Nombre de joueurs</div>
+    <div class="slider-wrap">
+      <div class="slider-labels">
+        <span data-i18n="players_min">6 joueurs</span>
+        <span data-i18n="players_max">30 joueurs</span>
+      </div>
+      <input type="range" min="6" max="30" value="12" id="players-slider" oninput="updatePlayersLabel()">
+      <div class="slider-value" id="players-label">12 <span style="font-size:1.2rem" data-i18n="players_unit">joueurs</span></div>
+    </div>
+
+    <div class="form-label" data-i18n="label_duration">Durée</div>
+    <div class="option-grid">
+      <div class="option-card" onclick="select(this,'duration')" data-value="Quick">
+        <div class="opt-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+        <div class="opt-label" data-i18n="dur_quick">Rapide</div>
+        <div class="opt-sub">~30 min</div>
+      </div>
+      <div class="option-card" onclick="select(this,'duration')" data-value="Standard">
+        <div class="opt-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M12 5V3"/><path d="M10 2h4"/></svg></div>
+        <div class="opt-label" data-i18n="dur_standard">Standard</div>
+        <div class="opt-sub">~1 h</div>
+      </div>
+      <div class="option-card" onclick="select(this,'duration')" data-value="Epic">
+        <div class="opt-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></div>
+        <div class="opt-label" data-i18n="dur_epic">Épique</div>
+        <div class="opt-sub">2 h+</div>
+      </div>
+    </div>
+
+    <div class="step-nav">
+      <div></div>
+      <button class="btn-next" onclick="nextStep()" data-i18n="btn_next">Suivant →</button>
+    </div>
+  </div>
+
+  <!-- STEP 1: SCENARIO & OCCASION -->
+  <div class="config-step" id="step-1">
+    <h3 style="font-family:'Cormorant Garamond',serif; font-size:1.8rem; margin-bottom:0.5rem;" data-i18n="s1_title">Scénario & Occasion</h3>
+    <p style="color:var(--muted); font-size:0.85rem; margin-bottom:0.5rem;" data-i18n="s1_sub">Quel type d'histoire et d'ambiance pour votre soirée ?</p>
+
+    <div class="form-label" data-i18n-html="label_scenario">Thème du scénario <span style="color:var(--rust); font-size:0.65rem;">(cochez tout ce qui s'applique)</span></div>
+    <div class="option-grid">
+      <div class="option-card multi" onclick="toggleMulti(this,'scenario')" data-value="Mystery">
+        <div class="opt-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg></div>
+        <div class="opt-label" data-i18n="sc_mystery">Mystère</div>
+        <div class="opt-sub" data-i18n="sc_mystery_sub">Enquête & indices</div>
+      </div>
+      <div class="option-card multi" onclick="toggleMulti(this,'scenario')" data-value="Adventure">
+        <div class="opt-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg></div>
+        <div class="opt-label" data-i18n="sc_adventure">Aventure</div>
+        <div class="opt-sub" data-i18n="sc_adventure_sub">Quête d'exploration</div>
+      </div>
+      <div class="option-card multi" onclick="toggleMulti(this,'scenario')" data-value="Social Deduction">
+        <div class="opt-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5"/><path d="M3 21v-2a7 7 0 0 1 7-7h4a7 7 0 0 1 7 7v2"/><path d="M8 3C8 1 16 1 16 3"/></svg></div>
+        <div class="opt-label" data-i18n="sc_social">Déduction sociale</div>
+        <div class="opt-sub" data-i18n="sc_social_sub">Qui est le traître ?</div>
+      </div>
+      <div class="option-card multi" onclick="toggleMulti(this,'scenario')" data-value="Thriller">
+        <div class="opt-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="10" r="8"/><path d="M12 18v4"/><path d="M8 22h8"/><circle cx="9" cy="9" r="1.5" fill="currentColor"/><circle cx="15" cy="9" r="1.5" fill="currentColor"/><path d="M10 14h4"/></svg></div>
+        <div class="opt-label" data-i18n="sc_thriller">Thriller</div>
+        <div class="opt-sub" data-i18n="sc_thriller_sub">Contre la montre</div>
+      </div>
+    </div>
+
+    <div class="form-label" data-i18n-html="label_occasion">Occasion <span style="color:var(--rust); font-size:0.65rem;">(cochez tout ce qui s'applique)</span></div>
+    <div class="option-grid">
+      <div class="option-card multi" onclick="toggleMulti(this,'occasion')" data-value="Birthday Party">
+        <div class="opt-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 18h20v4H2z"/><path d="M4 18v-5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v5"/><path d="M12 4v7"/><circle cx="12" cy="3" r="1"/></svg></div>
+        <div class="opt-label" data-i18n="oc_birthday">Anniversaire</div>
+      </div>
+      <div class="option-card multi" onclick="toggleMulti(this,'occasion')" data-value="House Party">
+        <div class="opt-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+        <div class="opt-label" data-i18n="oc_house">Soirée</div>
+      </div>
+      <div class="option-card multi" onclick="toggleMulti(this,'occasion')" data-value="Friends Night">
+        <div class="opt-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 22h8"/><path d="M12 15v7"/><path d="M5.2 2h13.6L17 10a5 5 0 0 1-10 0L5.2 2z"/><path d="M5.5 6h13"/></svg></div>
+        <div class="opt-label" data-i18n="oc_friends">Soirée entre amis</div>
+      </div>
+      <div class="option-card multi" onclick="toggleMulti(this,'occasion')" data-value="Team Building">
+        <div class="opt-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+        <div class="opt-label" data-i18n="oc_team">Team Building</div>
+      </div>
+      <div class="option-card multi" onclick="toggleMulti(this,'occasion')" data-value="Mixed/Strangers">
+        <div class="opt-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
+        <div class="opt-label" data-i18n="oc_mixed">Mixte / Inconnus</div>
+      </div>
+    </div>
+
+    <div class="step-nav">
+      <button class="btn-back" onclick="prevStep()" data-i18n="btn_back">← Retour</button>
+      <button class="btn-next" onclick="nextStep()" data-i18n="btn_next">Suivant →</button>
+    </div>
+  </div>
+
+  <!-- STEP 2: GAMEPLAY STYLE -->
+  <div class="config-step" id="step-2">
+    <h3 style="font-family:'Cormorant Garamond',serif; font-size:1.8rem; margin-bottom:0.5rem;" data-i18n="s2_title">Style de jeu</h3>
+    <p style="color:var(--muted); font-size:0.85rem; margin-bottom:1.5rem;" data-i18n="s2_sub">Comment voulez-vous équilibrer le physique et le numérique ?</p>
+
+    <div class="form-label" data-i18n="label_rv">Équilibre réel vs virtuel</div>
+    <div class="slider-wrap">
+      <div class="slider-labels">
+        <span data-i18n="rv_physical">Plutôt physique</span>
+        <span data-i18n="rv_digital">Plutôt numérique</span>
+      </div>
+      <input type="range" min="0" max="100" value="50" id="realvirtual-slider" oninput="updateRVLabel()">
+      <div class="slider-value" id="rv-label">Équilibré</div>
+    </div>
+
+    <div class="form-label" data-i18n-html="label_features">Fonctionnalités souhaitées <span style="color:var(--accent); font-size:0.65rem;">(cochez tout ce qui s'applique)</span></div>
+    <div class="option-grid">
+      <div class="option-card multi" onclick="toggleMulti(this,'features')" data-value="AI Scenarios">
+        <div class="opt-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="9" cy="16" r="1.5"/><circle cx="15" cy="16" r="1.5"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/><path d="M12 3v1"/></svg></div>
+        <div class="opt-label" data-i18n="feat_ai">Scénarios IA</div>
+        <div class="opt-sub" data-i18n="feat_ai_sub">Chaque partie unique</div>
+      </div>
+      <div class="option-card multi" onclick="toggleMulti(this,'features')" data-value="Leaderboard">
+        <div class="opt-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg></div>
+        <div class="opt-label" data-i18n="feat_leader">Classement</div>
+        <div class="opt-sub" data-i18n="feat_leader_sub">Score & compétition</div>
+      </div>
+      <div class="option-card multi" onclick="toggleMulti(this,'features')" data-value="Photo Clues">
+        <div class="opt-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></div>
+        <div class="opt-label" data-i18n="feat_photo">Indices photo</div>
+        <div class="opt-sub" data-i18n="feat_photo_sub">Défis caméra</div>
+      </div>
+      <div class="option-card multi" onclick="toggleMulti(this,'features')" data-value="Voice Clues">
+        <div class="opt-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="11" rx="3"/><path d="M5 10a7 7 0 0 0 14 0"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="8" y1="22" x2="16" y2="22"/></svg></div>
+        <div class="opt-label" data-i18n="feat_voice">Indices vocaux</div>
+        <div class="opt-sub" data-i18n="feat_voice_sub">Mystères audio</div>
+      </div>
+      <div class="option-card multi" onclick="toggleMulti(this,'features')" data-value="Real Locations">
+        <div class="opt-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
+        <div class="opt-label" data-i18n="feat_gps">Lieux réels</div>
+        <div class="opt-sub" data-i18n="feat_gps_sub">Basé sur le GPS</div>
+      </div>
+      <div class="option-card multi" onclick="toggleMulti(this,'features')" data-value="Character Cards">
+        <div class="opt-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4c0-1.1.9-2 2-2h6a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2z"/><path d="M5 6h.01M9 6h.01M5 10c1.5 0 2-1 4-1"/><path d="M12 14c0-1.1.9-2 2-2h6a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-6a2 2 0 0 1-2-2z"/><path d="M15 16h.01M19 16h.01M15 20c1.5 0 2-1 4-1"/></svg></div>
+        <div class="opt-label" data-i18n="feat_cards">Cartes personnage</div>
+        <div class="opt-sub" data-i18n="feat_cards_sub">Accessoires physiques</div>
+      </div>
+    </div>
+
+    <div class="step-nav">
+      <button class="btn-back" onclick="prevStep()" data-i18n="btn_back">← Retour</button>
+      <button class="btn-next" onclick="nextStep()" data-i18n="btn_next">Suivant →</button>
+    </div>
+  </div>
+
+  <!-- STEP 3: ABOUT YOU -->
+  <div class="config-step" id="step-3">
+    <h3 style="font-family:'Cormorant Garamond',serif; font-size:1.8rem; margin-bottom:0.5rem;" data-i18n="s3_title">À propos de vous</h3>
+    <p style="color:var(--muted); font-size:0.85rem; margin-bottom:0.5rem;" data-i18n="s3_sub">Aidez-nous à comprendre qui vous êtes. 1 minute, et ça nous aide à créer le bon jeu.</p>
+
+    <div class="form-label" data-i18n="label_age">Votre âge</div>
+    <div class="option-grid">
+      <div class="option-card" onclick="select(this,'age')" data-value="17-">
+        <div class="opt-label" data-i18n="age_17">17 ans ou moins</div>
+      </div>
+      <div class="option-card" onclick="select(this,'age')" data-value="18-22">
+        <div class="opt-label">18 – 22</div>
+      </div>
+      <div class="option-card" onclick="select(this,'age')" data-value="23-27">
+        <div class="opt-label">23 – 27</div>
+      </div>
+      <div class="option-card" onclick="select(this,'age')" data-value="28-35">
+        <div class="opt-label">28 – 35</div>
+      </div>
+      <div class="option-card" onclick="select(this,'age')" data-value="35+">
+        <div class="opt-label">35+</div>
+      </div>
+    </div>
+
+    <div class="form-label" data-i18n="label_occupation">Profession</div>
+    <div class="option-grid">
+      <div class="option-card" onclick="select(this,'occupation')" data-value="Student">
+        <div class="opt-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10l-10-5L2 10l10 5z"/><path d="M6 12v5c0 2 3 4 6 4s6-2 6-4v-5"/><path d="M22 10v6"/></svg></div>
+        <div class="opt-label" data-i18n="occ_student">Étudiant(e)</div>
+      </div>
+      <div class="option-card" onclick="select(this,'occupation')" data-value="Young Professional">
+        <div class="opt-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><path d="M2 12h20"/></svg></div>
+        <div class="opt-label" data-i18n="occ_pro">Jeune actif</div>
+      </div>
+      <div class="option-card" onclick="select(this,'occupation')" data-value="Creative / Freelance">
+        <div class="opt-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r="2.5"/><circle cx="19" cy="11.5" r="1.5"/><circle cx="17" cy="17.5" r="1.5"/><circle cx="6.5" cy="12.5" r="2.5"/><path d="M12 22C6.5 22 2 17.5 2 12S6.5 2 12 2s10 4.5 10 10c0 1.86-1.27 3-3 3h-1.5c-1.04 0-2 .96-2 2 0 .55.22 1.05.58 1.41.36.37.42.9.42 1.34 0 1.1-.9 2.25-4.5 2.25z"/></svg></div>
+        <div class="opt-label" data-i18n="occ_creative">Créatif / Freelance</div>
+      </div>
+      <div class="option-card" onclick="select(this,'occupation')" data-value="Other">
+        <div class="opt-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+        <div class="opt-label" data-i18n="occ_other">Autre</div>
+      </div>
+    </div>
+
+    <div class="form-label" data-i18n-html="label_values">Qu'est-ce qui compte le plus pour vous dans ce type de jeu ? <span style="color:var(--accent); font-size:0.65rem;">(cochez tout ce qui s'applique)</span></div>
+    <div class="option-grid">
+      <div class="option-card multi" onclick="toggleMulti(this,'values')" data-value="Fun & laughs">
+        <div class="opt-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg></div>
+        <div class="opt-label" data-i18n="val_fun">Fun & rires</div>
+      </div>
+      <div class="option-card multi" onclick="toggleMulti(this,'values')" data-value="Real challenge">
+        <div class="opt-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19.439 7.85c-.049.322.059.648.289.878l1.568 1.568c.47.47.706 1.087.706 1.704s-.235 1.233-.706 1.704l-1.611 1.611a.98.98 0 0 1-.837.276c-.47-.07-.802-.48-.968-.925a2.501 2.501 0 1 0-3.214 3.214c.446.166.855.497.925.968a.979.979 0 0 1-.276.837l-1.61 1.61a2.404 2.404 0 0 1-1.705.707 2.402 2.402 0 0 1-1.704-.706l-1.568-1.568a1.026 1.026 0 0 0-.877-.29c-.493.074-.84.504-1.02.968a2.5 2.5 0 1 1-3.237-3.237c.464-.18.894-.527.967-1.02a1.026 1.026 0 0 0-.289-.877l-1.568-1.568A2.402 2.402 0 0 1 1.998 12c0-.617.236-1.234.706-1.704L4.315 8.685a.98.98 0 0 1 .837-.276c.47.07.802.48.968.925a2.501 2.501 0 1 0 3.214-3.214c-.446-.166-.855-.497-.925-.968a.979.979 0 0 1 .276-.837l1.61-1.61A2.404 2.404 0 0 1 12 2c.617 0 1.234.236 1.704.706l1.568 1.568c.23.23.556.338.877.29.493-.074.84-.504 1.02-.968a2.5 2.5 0 1 1 3.237 3.237c-.464.18-.894.527-.967 1.02z"/></svg></div>
+        <div class="opt-label" data-i18n="val_challenge">Vrai défi</div>
+      </div>
+      <div class="option-card multi" onclick="toggleMulti(this,'values')" data-value="Great story">
+        <div class="opt-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
+        <div class="opt-label" data-i18n="val_story">Belle histoire</div>
+      </div>
+      <div class="option-card multi" onclick="toggleMulti(this,'values')" data-value="Affordable price">
+        <div class="opt-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+        <div class="opt-label" data-i18n="val_price">Prix abordable</div>
+      </div>
+      <div class="option-card multi" onclick="toggleMulti(this,'values')" data-value="Replayability">
+        <div class="opt-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg></div>
+        <div class="opt-label" data-i18n="val_replay">Rejouabilité</div>
+      </div>
+      <div class="option-card multi" onclick="toggleMulti(this,'values')" data-value="Unique experience">
+        <div class="opt-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8z"/></svg></div>
+        <div class="opt-label" data-i18n="val_unique">Expérience unique</div>
+      </div>
+      <div class="option-card multi" onclick="toggleMulti(this,'values')" data-value="Social bonding">
+        <div class="opt-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16.5 3c-1.74 0-3.41.81-4.5 2.09A5.99 5.99 0 0 0 7.5 3 5.45 5.45 0 0 0 2 8.5c0 5.42 7 11 10 12.5 3-1.5 10-7.08 10-12.5A5.45 5.45 0 0 0 16.5 3z"/><path d="M8 10h8"/><path d="M12 6v8"/></svg></div>
+        <div class="opt-label" data-i18n="val_social">Lien social</div>
+      </div>
+      <div class="option-card multi" onclick="toggleMulti(this,'values')" data-value="Easy to pick up">
+        <div class="opt-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 11V6a2 2 0 0 0-4 0v5"/><path d="M14 10V4a2 2 0 0 0-4 0v6"/><path d="M10 9.5V6a2 2 0 0 0-4 0v8"/><path d="M18 11a2 2 0 0 1 4 0v3a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34L3.35 16.5a2 2 0 0 1 2.83-2.83L8 15.34"/></svg></div>
+        <div class="opt-label" data-i18n="val_easy">Facile à prendre en main</div>
+      </div>
+    </div>
+
+    <div class="form-label" data-i18n="label_freetext">Autre chose que vous aimeriez dans ce type de jeu ? (optionnel)</div>
+    <textarea class="text-input" id="free-text" rows="3" data-i18n-placeholder="placeholder_freetext" placeholder="Qu'est-ce qui rendrait ce jeu parfait pour vous ?"></textarea>
+
+    <div class="step-nav">
+      <button class="btn-back" onclick="prevStep()" data-i18n="btn_back">← Retour</button>
+      <button class="btn-next" onclick="nextStep()" data-i18n="btn_next">Suivant →</button>
+    </div>
+  </div>
+
+  <!-- STEP 4: PRICE & CONFIRM -->
+  <div class="config-step" id="step-4">
+    <h3 style="font-family:'Cormorant Garamond',serif; font-size:1.8rem; margin-bottom:0.5rem;" data-i18n="s4_title">Fixez votre prix</h3>
+    <p style="color:var(--muted); font-size:0.85rem; margin-bottom:0.5rem;" data-i18n="s4_sub">Pas de piège. Dites-nous ce que cette expérience vaut réellement pour vous.</p>
+
+    <div class="price-note" data-i18n="price_note">Nous testons le concept ce soir, nous ne vendons rien encore. Votre prix nous aide à comprendre la perception de la valeur — c'est purement informatif.</div>
+
+    <div class="form-label" data-i18n="label_price">Combien paieriez-vous par personne ?</div>
+    <div class="slider-wrap">
+      <div class="slider-labels">
+        <span data-i18n="price_min">€0 — Gratuit</span>
+        <span>€30+</span>
+      </div>
+      <input type="range" min="0" max="30" value="10" id="price-slider" oninput="updatePriceLabel()">
+      <div class="slider-value" id="price-label"><span>€</span>10</div>
+    </div>
+
+    <div class="form-label" style="margin-top:3rem;" data-i18n="label_name">Prénom</div>
+    <input class="text-input" id="contact-name" type="text" data-i18n-placeholder="ph_name" placeholder="ex. Sophie">
+
+    <div class="form-label" data-i18n="label_surname">Nom</div>
+    <input class="text-input" id="contact-surname" type="text" data-i18n-placeholder="ph_surname" placeholder="ex. Laurent">
+
+    <div class="form-label" data-i18n="label_contact">Email ou numéro de téléphone</div>
+    <input class="text-input" id="contact-info" type="text" data-i18n-placeholder="ph_contact" placeholder="ex. sophie@email.com ou +32 ...">
+
+    <p style="color:var(--muted); font-size:0.72rem; font-style:italic; margin-top:0.8rem;" data-i18n="no_spam">Vos données ne seront jamais utilisées à des fins publicitaires. Promis.</p>
+
+    <div class="step-nav">
+      <button class="btn-back" onclick="prevStep()" data-i18n="btn_back">← Retour</button>
+      <button class="btn-next" onclick="submitForm()" style="background:var(--accent);" data-i18n="btn_submit">Envoyer ✓</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRMATION -->
+<div id="confirmation">
+  <div class="confirm-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4c0-1.1.9-2 2-2h6a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2z"/><path d="M5 6h.01M9 6h.01M5 10c1.5 0 2-1 4-1"/><path d="M12 14c0-1.1.9-2 2-2h6a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-6a2 2 0 0 1-2-2z"/><path d="M15 16h.01M19 16h.01M15 20c1.5 0 2-1 4-1"/></svg></div>
+  <div class="section-label" data-i18n="confirm_label">Merci !</div>
+  <h2 class="section-title" data-i18n-html="confirm_title">Vous êtes <em>dans le jeu</em></h2>
+  <p class="section-body" style="margin: 0 auto 2rem; text-align:center; max-width:440px;" data-i18n="confirm_body">Vos préférences ont été enregistrées. Nous les utiliserons pour créer l'expérience parfaite — dès ce soir.</p>
+
+  <div style="margin-top:2rem; display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
+    <button class="btn-primary" onclick="location.reload()" data-i18n="btn_another">Soumettre une autre réponse</button>
+  </div>
+</div>
+
+<!-- REVIEWS SECTION -->
+<section id="reviews" style="max-width:none; padding:6rem 2rem; border-top:1px solid var(--border); background:var(--black);">
+<div style="max-width:620px; margin:0 auto;">
+  <!-- REVIEW FORM -->
+  <div style="background:var(--deep); border:1px solid var(--border); padding:2.5rem;">
+    <div style="font-family:'Cormorant Garamond',serif; font-size:1.4rem; margin-bottom:1.5rem;" data-i18n-html="review_form_title">Laissez un <em style="color:var(--gold)">avis</em></div>
+
+    <label class="form-label" data-i18n="review_firstname_label">Prénom</label>
+    <input class="text-input" id="review-firstname" type="text" data-i18n-placeholder="review_firstname_ph" placeholder="ex. Sophie">
+
+    <label class="form-label" data-i18n="review_surname_label">Nom</label>
+    <input class="text-input" id="review-surname" type="text" data-i18n-placeholder="review_surname_ph" placeholder="ex. Laurent">
+
+    <label class="form-label" data-i18n="review_age_label">Âge</label>
+    <input class="text-input" id="review-age" type="text" data-i18n-placeholder="review_age_ph" placeholder="ex. 24">
+
+    <label class="form-label" data-i18n="review_contact_label">Email ou numéro de téléphone</label>
+    <input class="text-input" id="review-contact" type="text" data-i18n-placeholder="review_contact_ph" placeholder="ex. sophie@email.com ou +32 ...">
+
+    <p style="color:var(--muted); font-size:0.72rem; font-style:italic; margin-top:0.8rem;" data-i18n="no_spam">Vos données ne seront jamais utilisées à des fins publicitaires. Promis.</p>
+
+    <label class="form-label" data-i18n="review_rating_label">Votre note</label>
+    <div id="star-selector" style="display:flex; gap:0.6rem; margin:0.5rem 0 1rem;">
+      <span class="star-btn" data-val="1" onclick="setStars(1)">★</span>
+      <span class="star-btn" data-val="2" onclick="setStars(2)">★</span>
+      <span class="star-btn" data-val="3" onclick="setStars(3)">★</span>
+      <span class="star-btn" data-val="4" onclick="setStars(4)">★</span>
+      <span class="star-btn" data-val="5" onclick="setStars(5)">★</span>
+    </div>
+
+    <label class="form-label" data-i18n="review_text_label">Votre avis</label>
+    <textarea class="text-input" id="review-text" rows="3" data-i18n-placeholder="review_text_ph" placeholder="Dites-nous ce que vous avez pensé de l'expérience..."></textarea>
+
+    <label class="form-label" data-i18n="review_improve_label">Que changeriez-vous pour améliorer l'expérience ?</label>
+    <textarea class="text-input" id="review-improve" rows="3" data-i18n-placeholder="review_improve_ph" placeholder="Qu'est-ce qui rendrait le jeu encore meilleur ?"></textarea>
+
+    <label class="form-label" data-i18n="review_occasion_label">Occasion</label>
+    <input class="text-input" id="review-occasion" type="text" data-i18n-placeholder="review_occasion_ph" placeholder="ex. Anniversaire, Soirée entre amis...">
+
+    <div id="review-error" style="color:var(--accent); font-size:0.78rem; margin-top:0.8rem; display:none;" data-i18n="review_error">Veuillez remplir tous les champs et donner une note.</div>
+
+    <button class="btn-primary" onclick="submitReview()" style="margin-top:1.5rem; width:100%;" data-i18n="review_submit">Publier l'avis ✓</button>
+  </div>
+</div>
+</section>
+
+<footer data-i18n="footer">© 2026 JTP — Join the Party · Prototype MVP · Conçu pour les tests · Toutes les réponses stockées localement</footer>
+
+<script>
+  // =============================================
+  // TRANSLATIONS
+  // =============================================
+  const T = {
+    fr: {
+      // Nav
+      nav_reviews: 'Avis',
+      nav_play: 'Jouer ce soir',
+      // Hero
+      hero_eyebrow: 'Un nouveau type de jeu',
+      hero_title: 'C\'est <em>Vous</em><br>le<br><em>Mystère</em>',
+      hero_subtitle: 'Là où le virtuel rencontre la réalité. Là où votre groupe devient l\'histoire.',
+      hero_desc: 'Une expérience collaborative et immersive mêlant physique et numérique — conçue pour les groupes en quête de quelque chose d\'inoubliable. Imaginez l\'Orient Express, mais vous êtes tous à bord.',
+      hero_cta_build: 'Créez votre expérience',
+      hero_cta_discover: 'Découvrir le jeu',
+      // Tags
+      tag_players: '6 à 30+ joueurs',
+      tag_realvirtual: 'Jeu réel + virtuel',
+      tag_ai: 'Scénarios générés par IA',
+      tag_noexp: 'Aucune expérience requise',
+      tag_occasion: 'Toute occasion',
+      // About
+      about_label: 'Qu\'est-ce que JTP ?',
+      about_title: 'Un <em>mystère</em><br>collaboratif qui vit<br>entre deux mondes',
+      about_body1: 'Votre groupe reçoit des indices sur vos téléphones et les résout dans le monde réel. Aucun joueur ne possède l\'image complète — c\'est seulement ensemble que vous pouvez démêler la vérité.',
+      about_body2: 'Propulsé par des scénarios générés par IA, chaque partie est unique. Chaque session, une nouvelle histoire.',
+      stat_scenarios: 'Scénarios uniques',
+      stat_groupsize: 'Taille moyenne du groupe',
+      stat_duration: 'Durée moyenne d\'une session',
+      stat_devices: 'Appareils nécessaires',
+      stat_devices_val: 'Smartphones uniquement',
+      visual_mystery: 'Mystère',
+      visual_tagline: 'Chacun détient une part de la vérité',
+      perfect_for: 'Parfait pour',
+      occ_birthday: 'Anniversaires',
+      occ_house: 'Soirées',
+      occ_friends: 'Groupes d\'amis',
+      occ_team: 'Team buildings',
+      occ_mixed: 'Groupes mixtes & inconnus',
+      occ_evening: 'Soirées',
+      occ_student_parties: 'Soirées étudiantes',
+      // How it works
+      how_label: 'Comment ça marche',
+      how_title: 'Quatre étapes vers le <em>mystère</em>',
+      how_step1_name: '1. Configurer',
+      how_step1_desc: 'Choisissez la difficulté, le scénario, la taille du groupe, et le niveau physique ou numérique de l\'expérience.',
+      how_step2_name: '2. Recevez vos rôles',
+      how_step2_desc: 'Chaque joueur reçoit un rôle unique et des informations secrètes. Personne ne détient toutes les cartes.',
+      how_step3_name: '3. Collaborez',
+      how_step3_desc: 'Explorez les indices virtuels, communiquez dans le monde réel, et reconstituez la vérité ensemble.',
+      how_step4_name: '4. Révélation',
+      how_step4_desc: 'Démasquez la vérité, consultez le classement, et revivez les meilleurs moments.',
+      // Configurator
+      config_label: 'Créez votre expérience',
+      config_title: 'Construisez votre partie <em>parfaite</em>',
+      config_body: 'Dites-nous exactement ce que vous voulez — et indiquez ce que ça vaut pour vous. Ça prend 2 minutes.',
+      // Step 0
+      s0_title: 'Paramètres du jeu',
+      s0_sub: 'Configurez le cœur de votre expérience',
+      label_difficulty: 'Difficulté',
+      diff_casual: 'Décontracté', diff_casual_sub: 'Relax & fun',
+      diff_standard: 'Standard', diff_standard_sub: 'Défi équilibré',
+      diff_expert: 'Expert', diff_expert_sub: 'Casse-tête',
+      label_players: 'Nombre de joueurs',
+      players_min: '6 joueurs', players_max: '30 joueurs', players_unit: 'joueurs',
+      label_duration: 'Durée',
+      dur_quick: 'Rapide', dur_standard: 'Standard', dur_epic: 'Épique',
+      // Step 1
+      s1_title: 'Scénario & Occasion',
+      s1_sub: 'Quel type d\'histoire et d\'ambiance pour votre soirée ?',
+      label_scenario: 'Thème du scénario <span style="color:var(--rust); font-size:0.65rem;">(cochez tout ce qui s\'applique)</span>',
+      sc_mystery: 'Mystère', sc_mystery_sub: 'Enquête & indices',
+      sc_adventure: 'Aventure', sc_adventure_sub: 'Quête d\'exploration',
+      sc_social: 'Déduction sociale', sc_social_sub: 'Qui est le traître ?',
+      sc_thriller: 'Thriller', sc_thriller_sub: 'Contre la montre',
+      label_occasion: 'Occasion <span style="color:var(--rust); font-size:0.65rem;">(cochez tout ce qui s\'applique)</span>',      oc_birthday: 'Anniversaire', oc_house: 'Soirée', oc_friends: 'Soirée entre amis',
+      oc_team: 'Team Building', oc_mixed: 'Mixte / Inconnus',
+      // Step 2
+      s2_title: 'Style de jeu',
+      s2_sub: 'Comment voulez-vous équilibrer le physique et le numérique ?',
+      label_rv: 'Équilibre réel vs virtuel',
+      rv_physical: 'Plutôt physique', rv_digital: 'Plutôt numérique',
+      rv_mostly_physical: 'Plutôt physique', rv_leaning_physical: 'Tendance physique',
+      rv_balanced: 'Équilibré', rv_leaning_digital: 'Tendance numérique', rv_mostly_digital: 'Plutôt numérique',
+      label_features: 'Fonctionnalités souhaitées <span style="color:var(--accent); font-size:0.65rem;">(cochez tout ce qui s\'applique)</span>',
+      feat_ai: 'Scénarios IA', feat_ai_sub: 'Chaque partie unique',
+      feat_leader: 'Classement', feat_leader_sub: 'Score & compétition',
+      feat_photo: 'Indices photo', feat_photo_sub: 'Défis caméra',
+      feat_voice: 'Indices vocaux', feat_voice_sub: 'Mystères audio',
+      feat_gps: 'Lieux réels', feat_gps_sub: 'Basé sur le GPS',
+      feat_cards: 'Cartes personnage', feat_cards_sub: 'Accessoires physiques',
+      // Step 3
+      s3_title: 'À propos de vous',
+      s3_sub: 'Aidez-nous à comprendre qui vous êtes. 1 minute, et ça nous aide à créer le bon jeu.',
+      label_age: 'Votre âge',
+      age_17: '17 ans ou moins',
+      label_occupation: 'Profession',
+      occ_student: 'Étudiant(e)', occ_pro: 'Jeune actif', occ_creative: 'Créatif / Freelance', occ_other: 'Autre',
+      label_values: 'Qu\'est-ce qui compte le plus pour vous dans ce type de jeu ? <span style="color:var(--accent); font-size:0.65rem;">(cochez tout ce qui s\'applique)</span>',
+      val_fun: 'Fun & rires', val_challenge: 'Vrai défi', val_story: 'Belle histoire',
+      val_price: 'Prix abordable', val_replay: 'Rejouabilité', val_unique: 'Expérience unique',
+      val_social: 'Lien social', val_easy: 'Facile à prendre en main',
+      label_freetext: 'Autre chose que vous aimeriez dans ce type de jeu ? (optionnel)',
+      placeholder_freetext: 'Qu\'est-ce qui rendrait ce jeu parfait pour vous ?',
+      // Step 4
+      s4_title: 'Fixez votre prix',
+      s4_sub: 'Pas de piège. Dites-nous ce que cette expérience vaut réellement pour vous.',
+      price_note: 'Nous testons le concept ce soir, nous ne vendons rien encore. Votre prix nous aide à comprendre la perception de la valeur — c\'est purement informatif.',
+      label_price: 'Combien paieriez-vous par personne ?',
+      label_name: 'Prénom',
+      label_surname: 'Nom',
+      label_contact: 'Email ou numéro de téléphone',
+      ph_name: 'ex. Sophie',
+      ph_surname: 'ex. Laurent',
+      ph_contact: 'ex. sophie@email.com ou +32 ...',
+      no_spam: 'Vos données ne seront jamais utilisées à des fins publicitaires. Promis.',
+      price_min: '€0 — Gratuit',
+      label_summary: 'Votre résumé',
+      // Buttons
+      btn_next: 'Suivant →', btn_back: '← Retour', btn_submit: 'Envoyer ✓',
+      // Step labels
+      step_labels: [
+        'Étape 1 sur 5 — Paramètres du jeu',
+        'Étape 2 sur 5 — Scénario & Occasion',
+        'Étape 3 sur 5 — Style de jeu',
+        'Étape 4 sur 5 — À propos de vous',
+        'Étape 5 sur 5 — Fixez votre prix',
+      ],
+      // Confirmation
+      confirm_label: 'Merci !',
+      confirm_title: 'Vous êtes <em>dans le jeu</em>',
+      confirm_body: 'Vos préférences ont été enregistrées. Nous les utiliserons pour créer l\'expérience parfaite — dès ce soir.',
+      confirm_response: 'Votre réponse',
+      btn_another: 'Soumettre une autre réponse',
+      btn_viewall: 'Voir toutes les réponses',
+      // Responses viewer
+      resp_label: 'Tableau de bord',
+      resp_title: 'Toutes les <em>réponses</em>',
+      btn_export: 'Exporter CSV',
+      // Reviews
+      reviews_label: 'Ce que les gens disent',
+      reviews_title: 'Premières <em>réactions</em>',
+      reviews_sub: 'Retours réels de nos testeurs',
+      review_form_title: 'Laissez un <em style="color:var(--gold)">avis</em>',
+      review_firstname_label: 'Prénom', review_firstname_ph: 'ex. Sophie',
+      review_surname_label: 'Nom', review_surname_ph: 'ex. Laurent',
+      review_age_label: 'Âge', review_age_ph: 'ex. 24',
+      review_contact_label: 'Email ou numéro de téléphone', review_contact_ph: 'ex. sophie@email.com ou +32 ...',
+      review_rating_label: 'Votre note',
+      review_text_label: 'Votre avis', review_text_ph: 'Dites-nous ce que vous avez pensé de l\'expérience...',
+      review_improve_label: 'Que changeriez-vous pour améliorer l\'expérience ?', review_improve_ph: 'Qu\'est-ce qui rendrait le jeu encore meilleur ?',
+      review_occasion_label: 'Occasion',
+      review_occasion_ph: 'ex. Anniversaire, Soirée entre amis...',
+      review_error: 'Veuillez remplir tous les champs et donner une note.',
+      review_submit: 'Publier l\'avis ✓',
+      review_posted: '✓ Publié !',
+      // Summary keys
+      sum_difficulty: 'Difficulté', sum_players: 'Joueurs', sum_duration: 'Durée',
+      sum_scenario: 'Scénario', sum_occasion: 'Occasion', sum_rv: 'Réel/Virtuel',
+      sum_features: 'Fonctionnalités', sum_age: 'Âge', sum_occupation: 'Profession',
+      sum_values: 'Valeurs', sum_price: 'Prix (par personne)', sum_comments: 'Commentaires',
+      // Footer
+      footer: '© 2026 JTP — Join the Party · Prototype MVP · Conçu pour les tests · Toutes les réponses stockées localement',
+      // No responses
+      no_responses: 'Aucune réponse pour le moment.',
+      resp_entry: 'Réponse',
+    },
+    en: {
+      nav_reviews: 'Reviews',
+      nav_play: 'Play Tonight',
+      hero_eyebrow: 'A new kind of game',
+      hero_title: 'You <em>Are</em><br>the<br><em>Mystery</em>',
+      hero_subtitle: 'Where mystery meets reality. Where your group becomes the story.',
+      hero_desc: 'A collaborative, immersive experience blending the physical and digital — designed for groups who crave something unforgettable. Think Orient Express, but you\'re all on board.',
+      hero_cta_build: 'Build Your Experience',
+      hero_cta_discover: 'Discover the Game',
+      tag_players: '6 to 30+ players',
+      tag_realvirtual: 'Real + Virtual gameplay',
+      tag_ai: 'AI-generated scenarios',
+      tag_noexp: 'No experience needed',
+      tag_occasion: 'Any occasion',
+      about_label: 'What is JTP?',
+      about_title: 'A collaborative<br><em>mystery</em> that lives<br>between two worlds',
+      about_body1: 'Your group receives clues through your phones and solves them in the real world. No one player has the full picture — only together can you unravel the truth.',
+      about_body2: 'Powered by AI-generated scenarios, every game is unique. Every playthrough, a new story.',
+      stat_scenarios: 'Unique scenarios',
+      stat_groupsize: 'Average group size',
+      stat_duration: 'Average session length',
+      stat_devices: 'Devices required',
+      stat_devices_val: 'Smartphones only',
+      visual_mystery: 'Mystery',
+      visual_tagline: 'Everyone holds a piece of the truth',
+      perfect_for: 'Perfect for',
+      occ_birthday: 'Birthday parties',
+      occ_house: 'House parties',
+      occ_friends: 'Friend groups',
+      occ_team: 'Team buildings',
+      occ_mixed: 'Mixed groups & strangers',
+      occ_evening: 'Evening events',
+      occ_student_parties: 'Student parties',
+      how_label: 'How it works',
+      how_title: 'Four steps to <em>mystery</em>',
+      how_step1_name: '1. Configure',
+      how_step1_desc: 'Choose your difficulty, scenario, group size, and how physical or digital you want the experience to be.',
+      how_step2_name: '2. Get your roles',
+      how_step2_desc: 'Each player receives a unique role and secret information. No one holds all the cards.',
+      how_step3_name: '3. Collaborate',
+      how_step3_desc: 'Explore virtual clues, communicate in the physical world, and piece the truth together.',
+      how_step4_name: '4. Reveal',
+      how_step4_desc: 'Unmask the truth, see the leaderboard, and relive the best moments.',
+      config_label: 'Design your experience',
+      config_title: 'Build your <em>perfect</em> game',
+      config_body: 'Tell us exactly what you want — and name what it\'s worth to you. Takes 2 minutes.',
+      s0_title: 'Game Settings',
+      s0_sub: 'Configure the core of your experience',
+      label_difficulty: 'Difficulty',
+      diff_casual: 'Casual', diff_casual_sub: 'Relaxed & fun',
+      diff_standard: 'Standard', diff_standard_sub: 'Balanced challenge',
+      diff_expert: 'Expert', diff_expert_sub: 'Brain-melting',
+      label_players: 'Number of Players',
+      players_min: '6 players', players_max: '30 players', players_unit: 'players',
+      label_duration: 'Duration',
+      dur_quick: 'Quick', dur_standard: 'Standard', dur_epic: 'Epic',
+      s1_title: 'Scenario & Occasion',
+      s1_sub: 'What kind of story and setting fits your night?',
+      label_scenario: 'Scenario Theme <span style="color:var(--rust); font-size:0.65rem;">(pick all that apply)</span>',
+      sc_mystery: 'Mystery', sc_mystery_sub: 'Whodunnit & clues',
+      sc_adventure: 'Adventure', sc_adventure_sub: 'Exploration quest',
+      sc_social: 'Social Deduction', sc_social_sub: 'Who\'s the traitor?',
+      sc_thriller: 'Thriller', sc_thriller_sub: 'Against the clock',
+      label_occasion: 'Occasion <span style="color:var(--rust); font-size:0.65rem;">(pick all that apply)</span>',
+      oc_birthday: 'Birthday Party', oc_house: 'House Party', oc_friends: 'Friends Night',
+      oc_team: 'Team Building', oc_mixed: 'Mixed/Strangers',
+      s2_title: 'Gameplay Style',
+      s2_sub: 'How do you want to balance the physical and digital world?',
+      label_rv: 'Real vs Virtual Balance',
+      rv_physical: 'Mostly Physical', rv_digital: 'Mostly Digital',
+      rv_mostly_physical: 'Mostly Physical', rv_leaning_physical: 'Leaning Physical',
+      rv_balanced: 'Balanced', rv_leaning_digital: 'Leaning Digital', rv_mostly_digital: 'Mostly Digital',
+      label_features: 'Features you want <span style="color:var(--accent); font-size:0.65rem;">(pick all that apply)</span>',
+      feat_ai: 'AI Scenarios', feat_ai_sub: 'Every game unique',
+      feat_leader: 'Leaderboard', feat_leader_sub: 'Score & compete',
+      feat_photo: 'Photo Clues', feat_photo_sub: 'Camera challenges',
+      feat_voice: 'Voice Clues', feat_voice_sub: 'Audio mysteries',
+      feat_gps: 'Real Locations', feat_gps_sub: 'GPS-based',
+      feat_cards: 'Character Cards', feat_cards_sub: 'Physical props',
+      s3_title: 'About You',
+      s3_sub: 'Help us understand who you are. Takes 1 minute, helps us build the right game.',
+      label_age: 'Your Age',
+      age_17: '17 or younger',
+      label_occupation: 'Occupation',
+      occ_student: 'Student', occ_pro: 'Young Professional', occ_creative: 'Creative / Freelance', occ_other: 'Other',
+      label_values: 'What matters most to you in a game like this? <span style="color:var(--accent); font-size:0.65rem;">(pick all that apply)</span>',
+      val_fun: 'Fun & laughs', val_challenge: 'Real challenge', val_story: 'Great story',
+      val_price: 'Affordable price', val_replay: 'Replayability', val_unique: 'Unique experience',
+      val_social: 'Social bonding', val_easy: 'Easy to pick up',
+      label_freetext: 'Anything else you\'d want from this kind of game? (optional)',
+      placeholder_freetext: 'What would make this the perfect game for you?',
+      s4_title: 'Name Your Price',
+      s4_sub: 'No tricks. Tell us what this experience is actually worth to you.',
+      price_note: 'We\'re testing the concept tonight, not selling yet. Your price input tells us what feels fair for this type of experience — it\'s purely to help us understand value perception.',
+      label_price: 'What would you pay per person?',
+      label_name: 'First name',
+      label_surname: 'Last name',
+      label_contact: 'Email or phone number',
+      ph_name: 'e.g. Sophie',
+      ph_surname: 'e.g. Laurent',
+      ph_contact: 'e.g. sophie@email.com or +32 ...',
+      no_spam: 'Your data will never be used for advertising purposes. Promise.',
+      price_min: '€0 — Free',
+      label_summary: 'Your summary',
+      btn_next: 'Next →', btn_back: '← Back', btn_submit: 'Submit ✓',
+      step_labels: [
+        'Step 1 of 5 — Game Settings',
+        'Step 2 of 5 — Scenario & Occasion',
+        'Step 3 of 5 — Gameplay Style',
+        'Step 4 of 5 — About You',
+        'Step 5 of 5 — Name Your Price',
+      ],
+      confirm_label: 'Thank you!',
+      confirm_title: 'You\'re <em>in the game</em>',
+      confirm_body: 'Your preferences have been recorded. We\'ll use them to build the perfect experience — starting tonight.',
+      confirm_response: 'Your Response',
+      btn_another: 'Submit Another Response',
+      btn_viewall: 'View All Responses',
+      resp_label: 'Feedback Dashboard',
+      resp_title: 'All <em>Responses</em>',
+      btn_export: 'Export CSV',
+      reviews_label: 'What people are saying',
+      reviews_title: 'First <em>reactions</em>',
+      reviews_sub: 'Real feedback from our playtesters',
+      review_form_title: 'Leave a <em style="color:var(--gold)">review</em>',
+      review_firstname_label: 'First name', review_firstname_ph: 'e.g. Sophie',
+      review_surname_label: 'Last name', review_surname_ph: 'e.g. Laurent',
+      review_age_label: 'Age', review_age_ph: 'e.g. 24',
+      review_contact_label: 'Email or phone number', review_contact_ph: 'e.g. sophie@email.com or +32 ...',
+      review_rating_label: 'Your rating',
+      review_text_label: 'Your review', review_text_ph: 'Tell us what you thought of the experience...',
+      review_improve_label: 'What would you change to make it better?', review_improve_ph: 'What would make the game even better?',
+      review_occasion_label: 'Occasion',
+      review_occasion_ph: 'e.g. Birthday party, Friends night...',
+      review_error: 'Please fill in all fields and give a rating.',
+      review_submit: 'Post Review ✓',
+      review_posted: '✓ Posted!',
+      sum_difficulty: 'Difficulty', sum_players: 'Players', sum_duration: 'Duration',
+      sum_scenario: 'Scenario', sum_occasion: 'Occasion', sum_rv: 'Real/Virtual',
+      sum_features: 'Features', sum_age: 'Age', sum_occupation: 'Occupation',
+      sum_values: 'Values', sum_price: 'Price (per person)', sum_comments: 'Comments',
+      footer: '© 2026 JTP — Join the Party · MVP prototype · Built for testing · All responses stored locally',
+      no_responses: 'No responses yet.',
+      resp_entry: 'Response',
+    },
+    nl: {
+      nav_reviews: 'Recensies',
+      nav_play: 'Speel vanavond',
+      hero_eyebrow: 'Een nieuw soort spel',
+      hero_title: 'Jij <em>Bent</em><br>het<br><em>Mysterie</em>',
+      hero_subtitle: 'Waar mysterie de werkelijkheid ontmoet. Waar jouw groep het verhaal wordt.',
+      hero_desc: 'Een collaboratieve, meeslepende ervaring die het fysieke en digitale combineert — ontworpen voor groepen die iets onvergetelijks willen. Denk aan de Oriënt Express, maar jullie zitten allemaal aan boord.',
+      hero_cta_build: 'Creëer je ervaring',
+      hero_cta_discover: 'Ontdek het spel',
+      tag_players: '6 tot 30+ spelers',
+      tag_realvirtual: 'Echt + Virtueel gameplay',
+      tag_ai: 'AI-gegenereerde scenario\'s',
+      tag_noexp: 'Geen ervaring nodig',
+      tag_occasion: 'Elke gelegenheid',
+      about_label: 'Wat is JTP?',
+      about_title: 'Een collaboratief<br><em>mysterie</em> dat leeft<br>tussen twee werelden',
+      about_body1: 'Je groep ontvangt aanwijzingen via jullie telefoons en lost ze op in de echte wereld. Niemand heeft het volledige beeld — alleen samen kun je de waarheid ontrafelen.',
+      about_body2: 'Aangedreven door AI-gegenereerde scenario\'s, is elk spel uniek. Elke sessie, een nieuw verhaal.',
+      stat_scenarios: 'Unieke scenario\'s',
+      stat_groupsize: 'Gemiddelde groepsgrootte',
+      stat_duration: 'Gemiddelde sessieduur',
+      stat_devices: 'Benodigde apparaten',
+      stat_devices_val: 'Alleen smartphones',
+      visual_mystery: 'Mysterie',
+      visual_tagline: 'Iedereen bezit een stukje van de waarheid',
+      perfect_for: 'Perfect voor',
+      occ_birthday: 'Verjaardagsfeesten',
+      occ_house: 'Huisfeesten',
+      occ_friends: 'Vriendengroepen',
+      occ_team: 'Teambuildings',
+      occ_mixed: 'Gemixte groepen & onbekenden',
+      occ_evening: 'Avondevenementen',
+      occ_student_parties: 'Studentenfeesten',
+      how_label: 'Hoe het werkt',
+      how_title: 'Vier stappen naar het <em>mysterie</em>',
+      how_step1_name: '1. Configureren',
+      how_step1_desc: 'Kies je moeilijkheidsgraad, scenario, groepsgrootte, en hoe fysiek of digitaal je de ervaring wilt.',
+      how_step2_name: '2. Ontvang je rollen',
+      how_step2_desc: 'Elke speler krijgt een unieke rol en geheime informatie. Niemand heeft alle kaarten.',
+      how_step3_name: '3. Werk samen',
+      how_step3_desc: 'Verken virtuele aanwijzingen, communiceer in de echte wereld, en puzzel samen de waarheid in elkaar.',
+      how_step4_name: '4. Onthulling',
+      how_step4_desc: 'Ontmasker de waarheid, bekijk het klassement, en herbeleef de beste momenten.',
+      config_label: 'Ontwerp je ervaring',
+      config_title: 'Bouw je <em>perfecte</em> spel',
+      config_body: 'Vertel ons precies wat je wilt — en geef aan wat het je waard is. Duurt 2 minuten.',
+      s0_title: 'Spelinstellingen',
+      s0_sub: 'Configureer de kern van je ervaring',
+      label_difficulty: 'Moeilijkheid',
+      diff_casual: 'Casual', diff_casual_sub: 'Ontspannen & fun',
+      diff_standard: 'Standaard', diff_standard_sub: 'Evenwichtige uitdaging',
+      diff_expert: 'Expert', diff_expert_sub: 'Hersenkraker',
+      label_players: 'Aantal spelers',
+      players_min: '6 spelers', players_max: '30 spelers', players_unit: 'spelers',
+      label_duration: 'Duur',
+      dur_quick: 'Snel', dur_standard: 'Standaard', dur_epic: 'Episch',
+      s1_title: 'Scenario & Gelegenheid',
+      s1_sub: 'Welk type verhaal en setting past bij jullie avond?',
+      label_scenario: 'Scenariothema <span style="color:var(--rust); font-size:0.65rem;">(selecteer alles wat van toepassing is)</span>',
+      sc_mystery: 'Mysterie', sc_mystery_sub: 'Whodunnit & aanwijzingen',
+      sc_adventure: 'Avontuur', sc_adventure_sub: 'Ontdekkingstocht',
+      sc_social: 'Sociale deductie', sc_social_sub: 'Wie is de verrader?',
+      sc_thriller: 'Thriller', sc_thriller_sub: 'Tegen de klok',
+      label_occasion: 'Gelegenheid <span style="color:var(--rust); font-size:0.65rem;">(selecteer alles wat van toepassing is)</span>',
+      oc_birthday: 'Verjaardagsfeest', oc_house: 'Huisfeest', oc_friends: 'Vriendenavond',
+      oc_team: 'Teambuilding', oc_mixed: 'Gemixed / Onbekenden',
+      s2_title: 'Speelstijl',
+      s2_sub: 'Hoe wil je de balans tussen fysiek en digitaal?',
+      label_rv: 'Echt vs Virtueel balans',
+      rv_physical: 'Vooral fysiek', rv_digital: 'Vooral digitaal',
+      rv_mostly_physical: 'Vooral fysiek', rv_leaning_physical: 'Neigend fysiek',
+      rv_balanced: 'Evenwichtig', rv_leaning_digital: 'Neigend digitaal', rv_mostly_digital: 'Vooral digitaal',
+      label_features: 'Gewenste functies <span style="color:var(--accent); font-size:0.65rem;">(selecteer alles wat van toepassing is)</span>',
+      feat_ai: 'AI Scenario\'s', feat_ai_sub: 'Elk spel uniek',
+      feat_leader: 'Klassement', feat_leader_sub: 'Score & competitie',
+      feat_photo: 'Foto-aanwijzingen', feat_photo_sub: 'Camera-uitdagingen',
+      feat_voice: 'Stem-aanwijzingen', feat_voice_sub: 'Audio-mysteries',
+      feat_gps: 'Echte locaties', feat_gps_sub: 'GPS-gebaseerd',
+      feat_cards: 'Karakterkaarten', feat_cards_sub: 'Fysieke accessoires',
+      s3_title: 'Over jou',
+      s3_sub: 'Help ons begrijpen wie je bent. 1 minuut, en het helpt ons het juiste spel te maken.',
+      label_age: 'Je leeftijd',
+      age_17: '17 of jonger',
+      label_occupation: 'Beroep',
+      occ_student: 'Student', occ_pro: 'Jonge professional', occ_creative: 'Creatief / Freelance', occ_other: 'Anders',
+      label_values: 'Wat is voor jou het belangrijkst in dit soort spel? <span style="color:var(--accent); font-size:0.65rem;">(selecteer alles wat van toepassing is)</span>',
+      val_fun: 'Fun & lachen', val_challenge: 'Echte uitdaging', val_story: 'Goed verhaal',
+      val_price: 'Betaalbare prijs', val_replay: 'Herhaalbaarheid', val_unique: 'Unieke ervaring',
+      val_social: 'Sociale band', val_easy: 'Makkelijk op te pakken',
+      label_freetext: 'Nog iets anders dat je zou willen in dit soort spel? (optioneel)',
+      placeholder_freetext: 'Wat zou dit het perfecte spel voor jou maken?',
+      s4_title: 'Bepaal je prijs',
+      s4_sub: 'Geen trucjes. Vertel ons wat deze ervaring echt voor je waard is.',
+      price_note: 'We testen het concept vanavond, we verkopen nog niets. Je prijsinput vertelt ons wat eerlijk voelt voor dit type ervaring — puur om waardeperceptie te begrijpen.',
+      label_price: 'Wat zou je per persoon betalen?',
+      label_name: 'Voornaam',
+      label_surname: 'Achternaam',
+      label_contact: 'E-mail of telefoonnummer',
+      ph_name: 'bijv. Sophie',
+      ph_surname: 'bijv. Laurent',
+      ph_contact: 'bijv. sophie@email.com of +32 ...',
+      no_spam: 'Je gegevens worden nooit gebruikt voor reclamedoeleinden. Beloofd.',
+      price_min: '€0 — Gratis',
+      label_summary: 'Je samenvatting',
+      btn_next: 'Volgende →', btn_back: '← Terug', btn_submit: 'Verzenden ✓',
+      step_labels: [
+        'Stap 1 van 5 — Spelinstellingen',
+        'Stap 2 van 5 — Scenario & Gelegenheid',
+        'Stap 3 van 5 — Speelstijl',
+        'Stap 4 van 5 — Over jou',
+        'Stap 5 van 5 — Bepaal je prijs',
+      ],
+      confirm_label: 'Bedankt!',
+      confirm_title: 'Je bent <em>in het spel</em>',
+      confirm_body: 'Je voorkeuren zijn opgeslagen. We gebruiken ze om de perfecte ervaring te maken — vanaf vanavond.',
+      confirm_response: 'Je antwoord',
+      btn_another: 'Nog een antwoord indienen',
+      btn_viewall: 'Bekijk alle antwoorden',
+      resp_label: 'Feedback dashboard',
+      resp_title: 'Alle <em>antwoorden</em>',
+      btn_export: 'Exporteer CSV',
+      reviews_label: 'Wat mensen zeggen',
+      reviews_title: 'Eerste <em>reacties</em>',
+      reviews_sub: 'Echte feedback van onze testers',
+      review_form_title: 'Laat een <em style="color:var(--gold)">recensie</em> achter',
+      review_firstname_label: 'Voornaam', review_firstname_ph: 'bijv. Sophie',
+      review_surname_label: 'Achternaam', review_surname_ph: 'bijv. Laurent',
+      review_age_label: 'Leeftijd', review_age_ph: 'bijv. 24',
+      review_contact_label: 'E-mail of telefoonnummer', review_contact_ph: 'bijv. sophie@email.com of +32 ...',
+      review_rating_label: 'Je beoordeling',
+      review_text_label: 'Je recensie', review_text_ph: 'Vertel ons wat je van de ervaring vond...',
+      review_improve_label: 'Wat zou je veranderen om het beter te maken?', review_improve_ph: 'Wat zou het spel nog beter maken?',
+      review_occasion_label: 'Gelegenheid',
+      review_occasion_ph: 'bijv. Verjaardagsfeest, Vriendenavond...',
+      review_error: 'Vul alle velden in en geef een beoordeling.',
+      review_submit: 'Recensie plaatsen ✓',
+      review_posted: '✓ Geplaatst!',
+      sum_difficulty: 'Moeilijkheid', sum_players: 'Spelers', sum_duration: 'Duur',
+      sum_scenario: 'Scenario', sum_occasion: 'Gelegenheid', sum_rv: 'Echt/Virtueel',
+      sum_features: 'Functies', sum_age: 'Leeftijd', sum_occupation: 'Beroep',
+      sum_values: 'Waarden', sum_price: 'Prijs (per persoon)', sum_comments: 'Opmerkingen',
+      footer: '© 2026 JTP — Join the Party · MVP prototype · Gemaakt voor testen · Alle antwoorden lokaal opgeslagen',
+      no_responses: 'Nog geen antwoorden.',
+      resp_entry: 'Antwoord',
+    }
+  };
+
+  // =============================================
+  // LANGUAGE ENGINE
+  // =============================================
+  let currentLang = 'fr';
+
+  function setLang(lang) {
+    currentLang = lang;
+    document.documentElement.lang = lang;
+
+    // Update lang buttons
+    document.querySelectorAll('.lang-btn').forEach(b => {
+      b.classList.toggle('active', b.textContent.trim().toLowerCase() === lang);
+    });
+
+    // Update all data-i18n elements (text content)
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (T[lang][key] !== undefined) el.textContent = T[lang][key];
+    });
+
+    // Update all data-i18n-html elements (innerHTML)
+    document.querySelectorAll('[data-i18n-html]').forEach(el => {
+      const key = el.getAttribute('data-i18n-html');
+      if (T[lang][key] !== undefined) el.innerHTML = T[lang][key];
+    });
+
+    // Update all data-i18n-placeholder elements
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+      const key = el.getAttribute('data-i18n-placeholder');
+      if (T[lang][key] !== undefined) el.placeholder = T[lang][key];
+    });
+
+    // Update step label
+    document.getElementById('step-label-text').textContent = T[lang].step_labels[currentStep];
+
+    // Update dynamic labels
+    updatePlayersLabel();
+    updateRVLabel();
+    updatePriceLabel();
+  }
+
+  // =============================================
+  // STATE
+  // =============================================
+  const selections = {
+    difficulty: null, players: null, duration: null,
+    scenario: [], occasion: [],
+    realvirtual: 50, features: [],
+    age: null, occupation: null, values: [], freeText: '',
+    price: 10
+  };
+
+  let currentStep = 0;
+  const totalSteps = 5;
+
+  // =============================================
+  // NAVIGATION
+  // =============================================
+  function scrollToReviews() {
+    document.getElementById('reviews').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function scrollToConfigurator() {
+    document.getElementById('configurator').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function scrollToAbout() {
+    document.getElementById('about').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function nextStep() {
+    if (currentStep < totalSteps - 1) {
+      document.getElementById('step-' + currentStep).classList.remove('active');
+      currentStep++;
+      document.getElementById('step-' + currentStep).classList.add('active');
+      updateDots();
+      document.getElementById('configurator').scrollIntoView({ behavior: 'smooth' });
+    }
+  }
+
+  function prevStep() {
+    if (currentStep > 0) {
+      document.getElementById('step-' + currentStep).classList.remove('active');
+      currentStep--;
+      document.getElementById('step-' + currentStep).classList.add('active');
+      updateDots();
+      document.getElementById('configurator').scrollIntoView({ behavior: 'smooth' });
+    }
+  }
+
+  function updateDots() {
+    for (let i = 0; i < totalSteps; i++) {
+      const dot = document.getElementById('dot-' + i);
+      if (i < currentStep) { dot.className = 'step-dot done'; }
+      else if (i === currentStep) { dot.className = 'step-dot active'; }
+      else { dot.className = 'step-dot'; }
+    }
+    document.getElementById('step-label-text').textContent = T[currentLang].step_labels[currentStep];
+  }
+
+  // =============================================
+  // SELECTIONS — data-value goes to Sheet, display is translated
+  // =============================================
+  function select(el, key) {
+    const parent = el.closest('.option-grid');
+    parent.querySelectorAll('.option-card:not(.multi)').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    // Use data-value (English) for the Sheet, fall back to label text
+    selections[key] = el.getAttribute('data-value') || el.querySelector('.opt-label').textContent.trim();
+  }
+
+  function toggleMulti(el, key) {
+    el.classList.toggle('selected');
+    const value = el.getAttribute('data-value') || el.querySelector('.opt-label').textContent.trim();
+    const idx = selections[key].indexOf(value);
+    if (idx === -1) selections[key].push(value);
+    else selections[key].splice(idx, 1);
+  }
+
+  // =============================================
+  // SLIDERS
+  // =============================================
+  function updatePlayersLabel() {
+    const v = parseInt(document.getElementById('players-slider').value);
+    selections.players = v + ' players';
+    const unit = T[currentLang].players_unit;
+    document.getElementById('players-label').innerHTML = v + ' <span style="font-size:1.2rem">' + unit + '</span>';
+  }
+
+  // init players
+  selections.players = '12 players';
+
+  function updateRVLabel() {
+    const v = parseInt(document.getElementById('realvirtual-slider').value);
+    selections.realvirtual = v;
+    let key = 'rv_balanced';
+    if (v <= 20) key = 'rv_mostly_physical';
+    else if (v <= 40) key = 'rv_leaning_physical';
+    else if (v >= 80) key = 'rv_mostly_digital';
+    else if (v >= 60) key = 'rv_leaning_digital';
+    document.getElementById('rv-label').innerHTML = T[currentLang][key];
+  }
+
+  function updatePriceLabel() {
+    const v = parseInt(document.getElementById('price-slider').value);
+    selections.price = v;
+    document.getElementById('price-label').innerHTML = '<span>€</span>' + v;
+  }
+
+  // =============================================
+  // SUMMARY
+  // =============================================
+  function getRVText() {
+    const v = selections.realvirtual;
+    if (v <= 20) return 'Mostly Physical';
+    if (v <= 40) return 'Leaning Physical';
+    if (v >= 80) return 'Mostly Digital';
+    if (v >= 60) return 'Leaning Digital';
+    return 'Balanced';
+  }
+
+  function buildSummary() {
+    selections.freeText = document.getElementById('free-text').value;
+    const L = T[currentLang];
+    const grid = document.getElementById('summary-grid');
+    const items = [
+      [L.sum_difficulty, selections.difficulty || '—'],
+      [L.sum_players, selections.players || '—'],
+      [L.sum_duration, selections.duration || '—'],
+      [L.sum_scenario, selections.scenario || '—'],
+      [L.sum_occasion, selections.occasion || '—'],
+      [L.sum_rv, getRVText()],
+      [L.sum_features, selections.features.join(', ') || '—'],
+      [L.sum_age, selections.age || '—'],
+      [L.sum_occupation, selections.occupation || '—'],
+      [L.sum_values, selections.values.join(', ') || '—'],
+    ];
+    grid.innerHTML = items.map(([k, v]) => `
+      <div class="summary-item">
+        <div class="summary-key">${k}</div>
+        <div class="summary-val">${v}</div>
+      </div>
+    `).join('');
+  }
+
+  // =============================================
+  // SUBMIT
+  // =============================================
+  const SHEET_URL = 'https://script.google.com/macros/s/AKfycbw7IidOs1DxC6Xz_oabvCaUf7zfiJNQTxkFT4RcA4N-F73zI9urCyMsV1pa7mH9SCJoUQ/exec';
+
+  function submitForm() {
+    selections.price = parseInt(document.getElementById('price-slider').value);
+    selections.freeText = document.getElementById('free-text').value;
+
+    const entry = {
+      ...selections,
+      contactName: document.getElementById('contact-name').value.trim(),
+      contactSurname: document.getElementById('contact-surname').value.trim(),
+      contactInfo: document.getElementById('contact-info').value.trim(),
+      timestamp: new Date().toISOString()
+    };
+
+    // Save locally
+    let all = [];
+    try { all = JSON.parse(localStorage.getItem('jtp_responses') || '[]'); } catch(e) {}
+    all.push(entry);
+    localStorage.setItem('jtp_responses', JSON.stringify(all));
+
+    // Send to Google Sheets (English values via data-value)
+    fetch(SHEET_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'config', ...entry })
+    }).catch(e => console.log('Sheet sync failed:', e));
+
+    // Show confirmation
+    document.getElementById('configurator').style.display = 'none';
+    const conf = document.getElementById('confirmation');
+    conf.style.display = 'block';
+    conf.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // =============================================
+  // VIEW ALL RESPONSES
+  // =============================================
+  function showResponses() {
+    document.getElementById('confirmation').style.display = 'none';
+    const viewer = document.getElementById('responses-viewer');
+    viewer.style.display = 'block';
+
+    let all = [];
+    try { all = JSON.parse(localStorage.getItem('jtp_responses') || '[]'); } catch(e) {}
+    const L = T[currentLang];
+
+    if (all.length === 0) {
+      document.getElementById('all-responses-list').innerHTML = '<p style="color:var(--muted)">' + L.no_responses + '</p>';
+      return;
+    }
+
+    document.getElementById('all-responses-list').innerHTML = all.map((r, i) => `
+      <div class="response-entry">
+        <h4>${L.resp_entry} #${i+1} — ${new Date(r.timestamp).toLocaleString()}</h4>
+        ${[
+          [L.sum_difficulty, r.difficulty],
+          [L.sum_players, r.players],
+          [L.sum_duration, r.duration],
+          [L.sum_scenario, r.scenario],
+          [L.sum_occasion, r.occasion],
+          [L.sum_rv, r.realvirtual + '%'],
+          [L.sum_features, (r.features||[]).join(', ')],
+          [L.sum_age, r.age],
+          [L.sum_occupation, r.occupation],
+          [L.sum_values, (r.values||[]).join(', ')],
+          [L.sum_price, '€' + r.price],
+          [L.sum_comments, r.freeText],
+        ].map(([k,v]) => `<div class="response-row"><span class="rk">${k}</span><span class="rv">${v||'—'}</span></div>`).join('')}
+      </div>
+    `).join('');
+
+    viewer.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function closeResponses() {
+    document.getElementById('responses-viewer').style.display = 'none';
+    document.getElementById('confirmation').style.display = 'block';
+  }
+
+  // =============================================
+  // REVIEWS
+  // =============================================
+  let selectedStars = 0;
+
+  function setStars(n) {
+    selectedStars = n;
+    document.querySelectorAll('.star-btn').forEach((s, i) => {
+      s.classList.toggle('active', i < n);
+    });
+  }
+
+  function submitReview() {
+    const firstname = document.getElementById('review-firstname').value.trim();
+    const surname = document.getElementById('review-surname').value.trim();
+    const age = document.getElementById('review-age').value.trim();
+    const contact = document.getElementById('review-contact').value.trim();
+    const text = document.getElementById('review-text').value.trim();
+    const improve = document.getElementById('review-improve').value.trim();
+    const occasion = document.getElementById('review-occasion').value.trim();
+    const err = document.getElementById('review-error');
+
+    if (!firstname || !surname || !age || !contact || !text || !occasion || selectedStars === 0) {
+      err.style.display = 'block';
+      return;
+    }
+    err.style.display = 'none';
+
+    const reviewData = { type: 'review', firstname, surname, age, contact, stars: selectedStars, text, improve, occasion, timestamp: new Date().toISOString() };
+
+    // Send to Google Sheets
+    fetch(SHEET_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(reviewData)
+    }).catch(e => console.log('Sheet sync failed:', e));
+
+    // Save to localStorage
+    let reviews = [];
+    try { reviews = JSON.parse(localStorage.getItem('jtp_reviews') || '[]'); } catch(e) {}
+    reviews.unshift(reviewData);
+    localStorage.setItem('jtp_reviews', JSON.stringify(reviews));
+
+    // Reset form
+    document.getElementById('review-firstname').value = '';
+    document.getElementById('review-surname').value = '';
+    document.getElementById('review-age').value = '';
+    document.getElementById('review-contact').value = '';
+    document.getElementById('review-text').value = '';
+    document.getElementById('review-improve').value = '';
+    document.getElementById('review-occasion').value = '';
+    setStars(0);
+
+    // Flash confirmation
+    const L = T[currentLang];
+    const btn = event.target;
+    btn.textContent = L.review_posted;
+    btn.style.background = 'var(--accent)';
+    setTimeout(() => { btn.textContent = L.review_submit; btn.style.background = ''; }, 2000);
+  }
+
+  function exportCSV() {
+    let all = [];
+    try { all = JSON.parse(localStorage.getItem('jtp_responses') || '[]'); } catch(e) {}
+    if (!all.length) { alert('No responses to export.'); return; }
+
+    const headers = ['timestamp','difficulty','players','duration','scenario','occasion','realvirtual','features','age','occupation','values','price','freeText'];
+    const rows = all.map(r => headers.map(h => {
+      const v = r[h];
+      if (Array.isArray(v)) return '"' + v.join('; ') + '"';
+      return '"' + (v || '') + '"';
+    }).join(','));
+
+    const csv = [headers.join(','), ...rows].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'jtp_responses.csv';
+    a.click();
+  }
+</script>
+</body>
+</html>
